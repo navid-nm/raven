@@ -21,6 +21,7 @@ namespace Raven.Internal
             sb.Replace("} die (", "} catch (");
             sb.Replace("} die(", "} catch (");
             sb.Replace(").die(", ").catch(");
+            sb.Replace("doc.", "document.");
             sb.Replace(".str()", ".toString()");
             sb.Replace(".getnode(", ".getElementById(");
             sb.Replace(".makenode(", ".createElement(");
