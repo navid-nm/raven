@@ -4,7 +4,7 @@ Raven is a simple transpiler that affords syntactic sugar over JS, aiming to mak
 
 ---
 
-Example:
+Examples:
 
 ```
 fn main() {
@@ -19,6 +19,69 @@ function main() {
     console.log("test");
 }
 
+```
+
+Raven supports templating, which allows for importing HTML snippets and use them directly in JS code.
+This makes it easier to manage and reuse HTML structures.
+
+main.raven:
+
+```
+import "user_profile"
+
+doc.listenf(@dom_loaded, fn() {
+    const User = { name: "Jane Doe", avatar: "avatar.jpg", bio: "Person" };
+    const ProfileContainer = doc.getnode("profile-container");
+    if (ProfileContainer) {
+        const ProfileCard = doc.makenode("div");
+        ProfileCard.ClassName = ProfileClass;
+        ProfileCard.InnerHTML = ProfileTemplate(User);
+        ProfileContainer.AddSub(ProfileCard);
+    }
+});
+```
+
+user_profile.raven:
+
+```
+const ProfileClass = "profile-card";
+const ProfileTemplate = rhtml("templates/profile.rhtml");
+```
+
+templates/profile.rhtml:
+
+```
+<div class="profile">
+    <img src="${User.avatar}" alt="${User.name}">
+    <h2>${User.name}</h2>
+    <p>${User.bio}</p>
+</div>
+```
+
+This transpiles to main.js:
+
+```
+const ProfileClass = "profile-card";
+const ProfileTemplate = function(User) {
+    return `
+        <div class="profile">
+            <img src="${User.avatar}" alt="${User.name}">
+            <h2>${User.name}</h2>
+            <p>${User.bio}</p>
+        </div>
+    `;
+};
+
+document.addEventListener("DOMContentLoaded", function() {
+    const User = { name: "John Doe", avatar: "avatar.jpg", bio: "Developer" };
+    const ProfileContainer = document.getElementById("profile-container");
+    if (ProfileContainer) {
+        const ProfileCard = document.createElement("div");
+        ProfileCard.className = ProfileClass;
+        ProfileCard.innerHTML = ProfileTemplate(User);
+        ProfileContainer.appendChild(ProfileCard);
+    }
+});
 ```
 
 ---
