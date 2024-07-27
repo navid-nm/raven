@@ -1,17 +1,11 @@
-using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Raven.Internal
 {
-    public class RavenParser
+    public class RavenParser(string sourceCode)
     {
-        private readonly string _sourceCode;
-
-        public RavenParser(string sourceCode)
-        {
-            _sourceCode = sourceCode;
-        }
+        private readonly string _sourceCode = sourceCode;
 
         public string Transpile()
         {
@@ -35,7 +29,7 @@ namespace Raven.Internal
             return sb.ToString();
         }
 
-        private string HandleTemplateLiterals(string code)
+        private static string HandleTemplateLiterals(string code)
         {
             var pattern = @"@""(.*?)""";
             var regex = new Regex(pattern, RegexOptions.Singleline);
