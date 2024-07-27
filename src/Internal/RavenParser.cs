@@ -11,6 +11,7 @@ namespace Raven.Internal
         public string Transpile()
         {
             var code = HandleImports(_sourceCode);
+            code = HandleTemplates(code);
 
             var sb = new StringBuilder(code);
 
@@ -47,16 +48,41 @@ namespace Raven.Internal
             return code;
         }
 
+        private string HandleTemplates(string code)
+        {
+            var regex = TemplatePatternRegex();
+            var matches = regex.Matches(code);
+            foreach (Match match in matches)
+            {
+                var templatePath = match.Groups[1].Value;
+                code = code.Replace(match.Value, ReadAndConvertTemplate(templatePath));
+            }
+            return code;
+        }
+
         private string ReadAndTranspileImport(string importPath)
         {
             var fullPath = Path.Combine(_basePath, importPath + ".raven");
             if (!File.Exists(fullPath))
             {
-                throw new FileNotFoundException($"Imported file '{importPath}' not found.");
+                Console.WriteLine($"Imported file '{importPath}' not found.");
+                Environment.Exit(1);
             }
             var importCode = File.ReadAllText(fullPath);
             var importParser = new RavenParser(importCode, _basePath);
             return importParser.Transpile();
+        }
+
+        private string ReadAndConvertTemplate(string templatePath)
+        {
+            var fullPath = Path.Combine(_basePath, templatePath);
+            if (!File.Exists(fullPath))
+            {
+                Console.WriteLine($"Template file '{templatePath}' not found.");
+                Environment.Exit(1);
+            }
+            var templateContent = File.ReadAllText(fullPath);
+            return $"`{templateContent}`";
         }
 
         private static string HandleTemplateLiterals(string code)
@@ -75,5 +101,8 @@ namespace Raven.Internal
 
         [GeneratedRegex(@"import\s+""(.*?)""\s*;?")]
         private static partial Regex ImportPatternRegex();
+
+        [GeneratedRegex(@"rhtml\(""(.*?)""\)")]
+        private static partial Regex TemplatePatternRegex();
     }
 }
