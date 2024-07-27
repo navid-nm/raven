@@ -23,7 +23,10 @@ namespace Raven.Internal
             sb.Replace(".str()", ".toString()");
             sb.Replace(".getnode(", ".getElementById(");
             sb.Replace(".makenode(", ".createElement(");
-            sb.Replace(".addsubnode(", ".appendChild(");
+            sb.Replace(".listenf(", ".addEventListener(");
+            sb.Replace(".AddSub(", ".appendChild(");
+            sb.Replace(".ClassName", ".className");
+            sb.Replace(".InnerHTML", ".innerHTML");
             sb.Replace("(@dom_loaded", "(\"DOMContentLoaded\"");
 
             // Handle template literals for multi-line strings
