@@ -78,9 +78,9 @@ const ProfileTemplate = function(User) {
 
 document.addEventListener("DOMContentLoaded", function() {
     const User = {
-        name: "John Doe",
+        name: "Jane Doe",
         avatar: "avatar.jpg",
-        bio: "Developer"
+        bio: "Person"
     };
     const ProfileContainer = document.getElementById("profile-container");
     if (ProfileContainer) {
