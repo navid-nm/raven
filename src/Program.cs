@@ -9,8 +9,7 @@ if (args.Length != 1)
 var inputFilePath = args[0];
 if (!File.Exists(inputFilePath))
 {
-    Console.WriteLine("The input file does not exist.");
-    return;
+    Logger.RaiseProblem("The input file does not exist.");
 }
 
 var sourceCode = File.ReadAllText(inputFilePath);
