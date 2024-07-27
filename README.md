@@ -21,7 +21,7 @@ function main() {
 
 ```
 
-Raven supports templating, which allows for importing HTML snippets and use them directly in JS code.
+Raven supports templating, which allows for importing HTML snippets and using them directly in JS code.
 This makes it easier to manage and reuse HTML structures.
 
 main.raven:
