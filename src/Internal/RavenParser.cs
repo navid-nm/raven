@@ -22,6 +22,8 @@ namespace Raven.Internal
             sb.Replace("} die(", "} catch (");
             sb.Replace(").die(", ").catch(");
             sb.Replace("doc.", "document.");
+            sb.Replace("onready(", "document.addEventListener(\"DOMContentLoaded\",");
+            sb.Replace("onready (", "document.addEventListener(\"DOMContentLoaded\",");
             sb.Replace(".str()", ".toString()");
             sb.Replace("document.get(\"", "document.getElementById(\"");
             sb.Replace("document.make(\"", "document.createElement(\"");
