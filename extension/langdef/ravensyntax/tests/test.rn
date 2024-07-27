@@ -1,3 +1,16 @@
-fn main() {
-    print("hi")
-}
+import user
+
+onready(fn() {
+    const User = { 
+        name: "Jane Doe", 
+        avatar: "avatar.jpg", 
+        bio: "Person" 
+    }
+    let ProfileContainer = doc.get("profile-container")
+    if (ProfileContainer) {
+        const ProfileCard = doc.make("div")
+        ProfileCard.ClassName = ProfileClass
+        ProfileCard.InnerHTML = ProfileTemplate(User)
+        ProfileContainer.AddSub(ProfileCard)
+    }
+});

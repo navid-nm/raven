@@ -1,0 +1,2 @@
+const ProfileClass = "profile-card";
+const ProfileTemplate = rhtml("templates/prof.rhtml");
