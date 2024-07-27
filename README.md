@@ -27,25 +27,29 @@ This makes it easier to manage and reuse HTML structures.
 main.rn:
 
 ```
-import user_profile
+import user
 
 doc.listen(&ready, fn() {
-    const User = { name: "Jane Doe", avatar: "avatar.jpg", bio: "Person" };
-    const ProfileContainer = doc.get("profile-container");
+    const User = {
+        name: "Jane Doe",
+        avatar: "avatar.jpg",
+        bio: "Person"
+    }
+    let ProfileContainer = doc.get("profile-container")
     if (ProfileContainer) {
-        const ProfileCard = doc.make("div");
-        ProfileCard.ClassName = ProfileClass;
-        ProfileCard.InnerHTML = ProfileTemplate(User);
-        ProfileContainer.AddSub(ProfileCard);
+        const ProfileCard = doc.make("div")
+        ProfileCard.ClassName = ProfileClass
+        ProfileCard.InnerHTML = ProfileTemplate(User)
+        ProfileContainer.AddSub(ProfileCard)
     }
 });
 ```
 
-user_profile.rn:
+user.rn:
 
 ```
-const ProfileClass = "profile-card";
-const ProfileTemplate = rhtml("templates/profile.rhtml");
+const ProfileClass = "profile-card"
+const ProfileTemplate = rhtml("templates/profile.rhtml")
 ```
 
 templates/profile.rhtml:
@@ -73,7 +77,11 @@ const ProfileTemplate = function(User) {
 };
 
 document.addEventListener("DOMContentLoaded", function() {
-    const User = { name: "John Doe", avatar: "avatar.jpg", bio: "Developer" };
+    const User = {
+        name: "John Doe",
+        avatar: "avatar.jpg",
+        bio: "Developer"
+    };
     const ProfileContainer = document.getElementById("profile-container");
     if (ProfileContainer) {
         const ProfileCard = document.createElement("div");
