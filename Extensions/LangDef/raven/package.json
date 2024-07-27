@@ -2,7 +2,7 @@
    "name": "ravenlang",
    "displayName": "Raven Language",
    "description": "Syntax highlighting for Raven lang",
-   "icon": "icon.png",
+   "icon": "img/icon.png",
    "publisher": "NavidM",
    "repository": "https://github.com/navid-nm/raven",
    "version": "0.0.2",

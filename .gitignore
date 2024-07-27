@@ -8,3 +8,5 @@
 *.sln.docstates
 bin
 obj
+*.raven
+*.vsix
