@@ -1,5 +1,4 @@
 .vscode
-*.csproj
 *.dll
 *.exe
 *.pdb
