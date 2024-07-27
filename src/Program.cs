@@ -12,14 +12,21 @@ static void ProcessFile(string inputFilePath)
 
     if (path != null)
     {
-        var parser = new RavenParser(sourceCode, path);
-        var jsCode = parser.Transpile();
-        var outputFilePath = Path.Combine(
-            path,
-            $"{Path.GetFileNameWithoutExtension(inputFilePath)}.js"
-        );
-        File.WriteAllText(outputFilePath, jsCode);
-        Console.WriteLine($"Transpiled to -> {outputFilePath}");
+        try
+        {
+            var parser = new RavenParser(sourceCode, path);
+            var jsCode = parser.Transpile();
+            var outputFilePath = Path.Combine(
+                path,
+                $"{Path.GetFileNameWithoutExtension(inputFilePath)}.js"
+            );
+            File.WriteAllText(outputFilePath, jsCode);
+            Logger.Log($"Transpiled to -> {outputFilePath}", State.SUCCESS);
+        }
+        catch (Exception ex)
+        {
+            Logger.RaiseProblem($"Issue was encountered during transpilation: {ex.Message}");
+        }
     }
 }
 

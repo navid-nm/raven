@@ -10,5 +10,11 @@ namespace Raven.Internal
                 Environment.Exit(1);
             }
         }
+
+        public static void Log(string message, State state)
+        {
+            string colorCode = state == State.SUCCESS ? "\033[32m" : "\033[33m";
+            Console.WriteLine($"{colorCode}{message}\033[0m");
+        }
     }
 }
