@@ -1,6 +1,8 @@
-﻿if (args.Length != 1)
+﻿using Raven.Internal;
+
+if (args.Length != 1)
 {
-    Console.WriteLine("Please provide the input file path as an argument.");
+    Console.WriteLine("Provide the input file path as an argument.");
     return;
 }
 
@@ -12,16 +14,13 @@ if (!File.Exists(inputFilePath))
 }
 
 var sourceCode = File.ReadAllText(inputFilePath);
-var parser = new Raven.Internal.RavenParser(sourceCode);
+var parser = new RavenParser(sourceCode);
 var jsCode = parser.Transpile();
 
-if (inputFilePath != null)
+var dirname = Path.GetDirectoryName(inputFilePath);
+if (dirname != null)
 {
-    var dirname = Path.GetDirectoryName(inputFilePath);
-    if (dirname != null)
-    {
-        var outputFilePath = Path.Combine(Path.GetFileNameWithoutExtension(dirname) + ".js");
-        File.WriteAllText(outputFilePath, jsCode);
-        Console.WriteLine($"Transpiled JavaScript code written to {outputFilePath}");
-    }
+    var outputFilePath = Path.Combine(dirname, "out.js");
+    File.WriteAllText(outputFilePath, jsCode);
+    Console.WriteLine($"Transpiled JS written to {outputFilePath}");
 }
