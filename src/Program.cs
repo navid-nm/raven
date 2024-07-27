@@ -49,7 +49,7 @@ else if (args.Length == 1)
 {
     if (args[0] == "--version")
     {
-        Console.WriteLine("0.0.1");
+        Console.WriteLine("0.0.2");
         return;
     }
     var inputFilePath = args[0];
