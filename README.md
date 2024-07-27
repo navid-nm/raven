@@ -29,7 +29,7 @@ main.rn:
 ```
 import user_profile
 
-doc.listen(__ready__, fn() {
+doc.listen(&ready, fn() {
     const User = { name: "Jane Doe", avatar: "avatar.jpg", bio: "Person" };
     const ProfileContainer = doc.get("profile-container");
     if (ProfileContainer) {

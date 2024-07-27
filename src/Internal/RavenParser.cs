@@ -29,7 +29,7 @@ namespace Raven.Internal
             sb.Replace(".AddSub(", ".appendChild(");
             sb.Replace(".ClassName", ".className");
             sb.Replace(".InnerHTML", ".innerHTML");
-            sb.Replace("(__ready__", "(\"DOMContentLoaded\"");
+            sb.Replace("(&ready", "(\"DOMContentLoaded\"");
 
             // Handle template literals for multi-line strings
             sb = new StringBuilder(HandleTemplateLiterals(sb.ToString()));
