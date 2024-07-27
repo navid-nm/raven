@@ -4,7 +4,7 @@ Syntax highlighting for Raven language.
 
 Raven is a simple transpiler that affords syntactic sugar over JS, aiming to make JS less ugly without adding anything else.
 
-https://github.com/navid-m/raven
+https://github.com/navid-nm/raven
 
 ---
 
