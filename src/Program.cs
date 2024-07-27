@@ -22,7 +22,10 @@ if (path != null)
     var dirname = Path.GetDirectoryName(inputFilePath);
     if (dirname != null)
     {
-        var outputFilePath = Path.Combine(dirname, "out.js");
+        var outputFilePath = Path.Combine(
+            path,
+            $"{Path.GetFileNameWithoutExtension(inputFilePath)}.js"
+        );
         File.WriteAllText(outputFilePath, jsCode);
         Console.WriteLine($"Transpiled JS written to {outputFilePath}");
     }
