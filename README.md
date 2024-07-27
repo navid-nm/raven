@@ -42,7 +42,7 @@ onready(fn() {
         ProfileCard.InnerHTML = ProfileTemplate(User)
         ProfileContainer.AddSub(ProfileCard)
     }
-});
+})
 ```
 
 user.rn:
