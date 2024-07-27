@@ -19,7 +19,7 @@ static void ProcessFile(string inputFilePath)
             $"{Path.GetFileNameWithoutExtension(inputFilePath)}.js"
         );
         File.WriteAllText(outputFilePath, jsCode);
-        Console.WriteLine($"Transpiled JS written to {outputFilePath}");
+        Console.WriteLine($"Transpiled output written to {outputFilePath}");
     }
 }
 
@@ -29,7 +29,7 @@ if (args.Length == 0)
     string configFilePath = Path.Combine(currentDirectory, ".rconf");
     if (!File.Exists(configFilePath))
     {
-        Logger.RaiseProblem(".rconf is missing in the current directory.");
+        Logger.RaiseProblem("The .rconf is missing in this dir.");
     }
     var ravenFiles = Directory.GetFiles(currentDirectory, "*.raven", SearchOption.AllDirectories);
     if (ravenFiles.Length == 0)
