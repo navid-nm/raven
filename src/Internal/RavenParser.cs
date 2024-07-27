@@ -23,8 +23,8 @@ namespace Raven.Internal
             sb.Replace(").die(", ").catch(");
             sb.Replace("doc.", "document.");
             sb.Replace(".str()", ".toString()");
-            sb.Replace(".nget(", ".getElementById(");
-            sb.Replace(".nmake(", ".createElement(");
+            sb.Replace("document.get(\"", "document.getElementById(\"");
+            sb.Replace("document.make(\"", "document.createElement(\"");
             sb.Replace("document.listen(", "document.addEventListener(");
             sb.Replace(".AddSub(", ".appendChild(");
             sb.Replace(".ClassName", ".className");

@@ -31,9 +31,9 @@ import user_profile
 
 doc.listen(__ready__, fn() {
     const User = { name: "Jane Doe", avatar: "avatar.jpg", bio: "Person" };
-    const ProfileContainer = doc.nget("profile-container");
+    const ProfileContainer = doc.get("profile-container");
     if (ProfileContainer) {
-        const ProfileCard = doc.nmake("div");
+        const ProfileCard = doc.make("div");
         ProfileCard.ClassName = ProfileClass;
         ProfileCard.InnerHTML = ProfileTemplate(User);
         ProfileContainer.AddSub(ProfileCard);
