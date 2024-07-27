@@ -1,10 +1,11 @@
 {
-   "name": "raven",
-   "displayName": "Raven",
-   "description": ".raven",
-   "publisher": "navid-m",
-   "repository": "https://gitlab.com/navid-m/raven",
-   "version": "0.0.1",
+   "name": "ravenlang",
+   "displayName": "Raven Language",
+   "description": "Syntax highlighting for Raven lang",
+   "icon": "icon.png",
+   "publisher": "NavidM",
+   "repository": "https://github.com/navid-nm/raven",
+   "version": "0.0.2",
    "engines": {
       "vscode": "^1.91.0"
    },
@@ -20,7 +21,8 @@
                "raven"
             ],
             "extensions": [
-               ".raven .rave"
+               ".raven",
+               ".rave"
             ],
             "configuration": "./language-configuration.json"
          }

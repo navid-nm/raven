@@ -1,10 +1,10 @@
 # Raven
 
-Syntax highlighting for raven lang.
+Syntax highlighting for Raven language.
 
-Simple lang that just does some syntactic sugar over js.
+Raven is a simple transpiler that affords syntactic sugar over JS, aiming to make JS less ugly without adding anything else.
 
-https://gitlab.com/navid-m/raven
+https://github.com/navid-m/raven
 
 ---
 
@@ -14,7 +14,7 @@ Example:
     print("test")
 }`
 
-Transpiles to the following js:
+Transpiles to the following JavaScript:
 
 `function main() {
     console.log("test");
