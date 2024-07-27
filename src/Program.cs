@@ -14,13 +14,17 @@ if (!File.Exists(inputFilePath))
 }
 
 var sourceCode = File.ReadAllText(inputFilePath);
-var parser = new RavenParser(sourceCode);
-var jsCode = parser.Transpile();
+var path = Path.GetDirectoryName(inputFilePath);
 
-var dirname = Path.GetDirectoryName(inputFilePath);
-if (dirname != null)
+if (path != null)
 {
-    var outputFilePath = Path.Combine(dirname, "out.js");
-    File.WriteAllText(outputFilePath, jsCode);
-    Console.WriteLine($"Transpiled JS written to {outputFilePath}");
+    var parser = new RavenParser(sourceCode, path);
+    var jsCode = parser.Transpile();
+    var dirname = Path.GetDirectoryName(inputFilePath);
+    if (dirname != null)
+    {
+        var outputFilePath = Path.Combine(dirname, "out.js");
+        File.WriteAllText(outputFilePath, jsCode);
+        Console.WriteLine($"Transpiled JS written to {outputFilePath}");
+    }
 }
