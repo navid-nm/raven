@@ -1,0 +1,81 @@
+{
+   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+   "name": "Raven",
+   "patterns": [
+      {
+         "include": "#comments"
+      },
+      {
+         "include": "#keywords"
+      },
+      {
+         "include": "#functions"
+      },
+      {
+         "include": "#strings"
+      },
+      {
+         "include": "#template-literals"
+      },
+      {
+         "include": "#try-catch"
+      }
+   ],
+   "repository": {
+      "comments": {
+         "patterns": [
+            {
+               "name": "comment.line.double-slash.raven",
+               "match": "//.*$"
+            }
+         ]
+      },
+      "keywords": {
+         "patterns": [
+            {
+               "name": "keyword.control.raven",
+               "match": "\\b(if|while|for|return|fn|die|const|let|print|print_error)\\b"
+            }
+         ]
+      },
+      "functions": {
+         "patterns": [
+            {
+               "name": "entity.name.function.raven",
+               "match": "\\bfn\\s+\\w+\\s*\\([^\\)]*\\)"
+            }
+         ]
+      },
+      "strings": {
+         "name": "string.quoted.double.raven",
+         "begin": "\"",
+         "end": "\"",
+         "patterns": [
+            {
+               "name": "constant.character.escape.raven",
+               "match": "\\\\."
+            }
+         ]
+      },
+      "template-literals": {
+         "name": "string.quoted.template.raven",
+         "begin": "@\"",
+         "end": "\"",
+         "patterns": [
+            {
+               "name": "constant.character.escape.raven",
+               "match": "\\\\."
+            }
+         ]
+      },
+      "try-catch": {
+         "patterns": [
+            {
+               "name": "keyword.control.trycatch.raven",
+               "match": "\\b(try|die)\\b"
+            }
+         ]
+      }
+   },
+   "scopeName": "source.raven"
+}
