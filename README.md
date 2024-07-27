@@ -29,7 +29,7 @@ main.raven:
 ```
 import "user_profile"
 
-doc.listenf(@dom_loaded, fn() {
+doc.listenf(&dom_loaded, fn() {
     const User = { name: "Jane Doe", avatar: "avatar.jpg", bio: "Person" };
     const ProfileContainer = doc.getnode("profile-container");
     if (ProfileContainer) {
