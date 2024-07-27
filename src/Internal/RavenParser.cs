@@ -25,7 +25,7 @@ namespace Raven.Internal
             sb.Replace(".str()", ".toString()");
             sb.Replace(".nget(", ".getElementById(");
             sb.Replace(".nmake(", ".createElement(");
-            sb.Replace(".listenf(", ".addEventListener(");
+            sb.Replace("document.listen(", "document.addEventListener(");
             sb.Replace(".AddSub(", ".appendChild(");
             sb.Replace(".ClassName", ".className");
             sb.Replace(".InnerHTML", ".innerHTML");

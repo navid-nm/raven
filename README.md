@@ -29,7 +29,7 @@ main.rn:
 ```
 import user_profile
 
-doc.listenf(__ready__, fn() {
+doc.listen(__ready__, fn() {
     const User = { name: "Jane Doe", avatar: "avatar.jpg", bio: "Person" };
     const ProfileContainer = doc.nget("profile-container");
     if (ProfileContainer) {
