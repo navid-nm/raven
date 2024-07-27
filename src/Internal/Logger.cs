@@ -1,3 +1,5 @@
+using System.Drawing;
+
 namespace Raven.Internal
 {
     public static class Logger
@@ -13,8 +15,11 @@ namespace Raven.Internal
 
         public static void Log(string message, State state)
         {
-            string colorCode = state == State.SUCCESS ? "\033[32m" : "\033[33m";
-            Console.WriteLine($"{colorCode}{message}\033[0m");
+            ConsoleColor colorCode =
+                state == State.SUCCESS ? ConsoleColor.Green : ConsoleColor.Yellow;
+            Console.ForegroundColor = colorCode;
+            Console.WriteLine(message);
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }
