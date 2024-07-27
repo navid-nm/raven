@@ -1,0 +1,6 @@
+
+fn main() {
+    print("hi")
+    warn("hello")
+    
+}
