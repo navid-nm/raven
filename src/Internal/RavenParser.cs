@@ -23,8 +23,8 @@ namespace Raven.Internal
             sb.Replace(").die(", ").catch(");
             sb.Replace("doc.", "document.");
             sb.Replace(".str()", ".toString()");
-            sb.Replace(".getnode(", ".getElementById(");
-            sb.Replace(".makenode(", ".createElement(");
+            sb.Replace(".nget(", ".getElementById(");
+            sb.Replace(".nmake(", ".createElement(");
             sb.Replace(".listenf(", ".addEventListener(");
             sb.Replace(".AddSub(", ".appendChild(");
             sb.Replace(".ClassName", ".className");
@@ -98,7 +98,7 @@ namespace Raven.Internal
             );
         }
 
-        [GeneratedRegex(@"import\s+""(.*?)""\s*;?")]
+        [GeneratedRegex(@"import\s+(\w+)\s*;?")]
         private static partial Regex ImportPatternRegex();
 
         [GeneratedRegex(@"rhtml\(""(.*?)""\)")]

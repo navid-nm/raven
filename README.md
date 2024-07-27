@@ -27,13 +27,13 @@ This makes it easier to manage and reuse HTML structures.
 main.rn:
 
 ```
-import "user_profile"
+import user_profile
 
 doc.listenf(__ready__, fn() {
     const User = { name: "Jane Doe", avatar: "avatar.jpg", bio: "Person" };
-    const ProfileContainer = doc.getnode("profile-container");
+    const ProfileContainer = doc.nget("profile-container");
     if (ProfileContainer) {
-        const ProfileCard = doc.makenode("div");
+        const ProfileCard = doc.nmake("div");
         ProfileCard.ClassName = ProfileClass;
         ProfileCard.InnerHTML = ProfileTemplate(User);
         ProfileContainer.AddSub(ProfileCard);
