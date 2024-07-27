@@ -26,11 +26,6 @@ static void ProcessFile(string inputFilePath)
 if (args.Length == 0)
 {
     string currentDirectory = Directory.GetCurrentDirectory();
-    string configFilePath = Path.Combine(currentDirectory, ".rconf");
-    if (!File.Exists(configFilePath))
-    {
-        Logger.RaiseProblem("The .rconf is missing in this dir.");
-    }
     var ravenFiles = Directory.GetFiles(currentDirectory, "*.rn", SearchOption.AllDirectories);
     if (ravenFiles.Length == 0)
     {
@@ -45,19 +40,20 @@ if (args.Length == 0)
 }
 else if (args.Length == 1)
 {
-    if (args[0] == "new" || args[0] == "init")
-    {
-        File.Create(".rconf").Dispose();
-        Console.WriteLine("Rconf was created. It should be gitignored.");
-        return;
-    }
     if (args[0] == "--version")
     {
         Console.WriteLine("0.0.1");
         return;
     }
     var inputFilePath = args[0];
-    ProcessFile(inputFilePath);
+    if (File.Exists(inputFilePath) && Path.GetExtension(inputFilePath) == ".rn")
+    {
+        ProcessFile(inputFilePath);
+    }
+    else
+    {
+        Console.WriteLine("Provide a valid .rn file path as an argument.");
+    }
 }
 else
 {
