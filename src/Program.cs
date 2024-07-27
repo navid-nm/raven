@@ -19,7 +19,7 @@ static void ProcessFile(string inputFilePath)
             $"{Path.GetFileNameWithoutExtension(inputFilePath)}.js"
         );
         File.WriteAllText(outputFilePath, jsCode);
-        Console.WriteLine($"Transpiled output written to {outputFilePath}");
+        Console.WriteLine($"Transpiled to -> {outputFilePath}");
     }
 }
 
@@ -34,7 +34,9 @@ if (args.Length == 0)
     var ravenFiles = Directory.GetFiles(currentDirectory, "*.raven", SearchOption.AllDirectories);
     if (ravenFiles.Length == 0)
     {
-        Logger.RaiseProblem("No source files found in the current directory and subdirectories.");
+        Logger.RaiseProblem(
+            "No source files found in the current directory or its subdirectories."
+        );
     }
     foreach (var ravenFile in ravenFiles)
     {
