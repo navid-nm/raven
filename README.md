@@ -29,7 +29,7 @@ main.rn:
 ```
 import user
 
-doc.listen(&ready, fn() {
+onready(fn() {
     const User = {
         name: "Jane Doe",
         avatar: "avatar.jpg",
