@@ -5,7 +5,7 @@
    "icon": "img/icon.png",
    "publisher": "NavidM",
    "repository": "https://github.com/navid-nm/raven",
-   "version": "0.0.2",
+   "version": "1.0.0",
    "engines": {
       "vscode": "^1.91.0"
    },
