@@ -65,8 +65,7 @@ namespace Raven.Internal
             var fullPath = Path.Combine(_basePath, importPath + ".raven");
             if (!File.Exists(fullPath))
             {
-                Console.WriteLine($"Imported file '{importPath}' not found.");
-                Environment.Exit(1);
+                Logger.RaiseProblem($"Imported file '{importPath}' not found.");
             }
             var importCode = File.ReadAllText(fullPath);
             var importParser = new RavenParser(importCode, _basePath);
@@ -78,8 +77,7 @@ namespace Raven.Internal
             var fullPath = Path.Combine(_basePath, templatePath);
             if (!File.Exists(fullPath))
             {
-                Console.WriteLine($"Template file '{templatePath}' not found.");
-                Environment.Exit(1);
+                Logger.RaiseProblem($"Template file '{templatePath}' not found.");
             }
             var templateContent = File.ReadAllText(fullPath);
             return $"`{templateContent}`";
