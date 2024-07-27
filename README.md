@@ -6,7 +6,7 @@ Raven is a simple transpiler that affords syntactic sugar over JS, aiming to mak
 
 Examples:
 
-```
+```d
 fn main() {
     print("test")
 }
@@ -18,7 +18,6 @@ Transpiles to the following JavaScript:
 function main() {
     console.log("test");
 }
-
 ```
 
 Raven supports templating, which allows for importing HTML snippets and using them directly in JS code.
@@ -26,7 +25,7 @@ This makes it easier to manage and reuse HTML structures.
 
 main.rn:
 
-```
+```d
 import user
 
 onready(fn() {
@@ -47,14 +46,14 @@ onready(fn() {
 
 user.rn:
 
-```
+```d
 const ProfileClass = "profile-card"
 const ProfileTemplate = rhtml("templates/profile.rhtml")
 ```
 
 templates/profile.rhtml:
 
-```
+```html
 <div class="profile">
     <img src="${User.avatar}" alt="${User.name}">
     <h2>${User.name}</h2>
