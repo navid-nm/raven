@@ -31,7 +31,7 @@ if (args.Length == 0)
     {
         Logger.RaiseProblem("The .rconf is missing in this dir.");
     }
-    var ravenFiles = Directory.GetFiles(currentDirectory, "*.raven", SearchOption.AllDirectories);
+    var ravenFiles = Directory.GetFiles(currentDirectory, "*.rn", SearchOption.AllDirectories);
     if (ravenFiles.Length == 0)
     {
         Logger.RaiseProblem(

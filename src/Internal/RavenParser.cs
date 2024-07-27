@@ -63,7 +63,7 @@ namespace Raven.Internal
 
         private string ReadAndTranspileImport(string importPath)
         {
-            var fullPath = Path.Combine(_basePath, importPath + ".raven");
+            var fullPath = Path.Combine(_basePath, importPath + ".rn");
             if (!File.Exists(fullPath))
             {
                 Logger.RaiseProblem($"Imported file '{importPath}' not found.");

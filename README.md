@@ -24,7 +24,7 @@ function main() {
 Raven supports templating, which allows for importing HTML snippets and using them directly in JS code.
 This makes it easier to manage and reuse HTML structures.
 
-main.raven:
+main.rn:
 
 ```
 import "user_profile"
@@ -41,7 +41,7 @@ doc.listenf(__ready__, fn() {
 });
 ```
 
-user_profile.raven:
+user_profile.rn:
 
 ```
 const ProfileClass = "profile-card";

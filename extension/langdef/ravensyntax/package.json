@@ -21,8 +21,8 @@
                "raven"
             ],
             "extensions": [
-               ".raven",
-               ".rave"
+               ".rn",
+               ".rnm"
             ],
             "configuration": "./language-configuration.json"
          }
