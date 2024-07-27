@@ -34,7 +34,7 @@
          "patterns": [
             {
                "name": "keyword.control.raven",
-               "match": "\\b(if|while|for|return|fn|die|const|doc|let|var|print|warn|import|do|then|panic|end|break|in|foreach)\\b"
+               "match": "\\b(if|while|for|return|fn|die|const|doc|let|var|print|warn|import|do|then|panic|end|break|in|foreach|onready)\\b"
             }
          ]
       },
