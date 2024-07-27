@@ -1,0 +1,11 @@
+.vscode
+*.csproj
+*.dll
+*.exe
+*.pdb
+*.dbmdl
+*.user
+*.suo
+*.sln.docstates
+bin
+obj
