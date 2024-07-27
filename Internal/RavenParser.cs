@@ -55,14 +55,14 @@ namespace Raven.Internal
             return new RavenFunction { Name = funcName, Parameters = paramsa };
         }
 
-        private static RavenPrintStatement ParsePrintStatement(string line)
+        private static RavenStatement ParsePrintStatement(string line)
         {
             var match = MyRegex1().Match(line);
             if (!match.Success)
                 throw new Exception("Invalid print statement");
 
             var expr = match.Groups[1].Value;
-            return new RavenPrintStatement { Expression = expr };
+            return new RavenStatement { Expression = expr };
         }
 
         private static string GenerateJsCode(RavenAst ast)
