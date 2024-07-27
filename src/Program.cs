@@ -45,15 +45,21 @@ if (args.Length == 0)
 }
 else if (args.Length == 1)
 {
+    if (args[0] == "new" || args[0] == "init")
+    {
+        File.Create(".rconf").Dispose();
+        Console.WriteLine("Rconf was created. It should be gitignored.");
+        return;
+    }
+    if (args[0] == "--version")
+    {
+        Console.WriteLine("0.0.1");
+        return;
+    }
     var inputFilePath = args[0];
     ProcessFile(inputFilePath);
-}
-else if (args.Length == 1 && args[0] == "--version")
-{
-    Console.WriteLine("0.0.1");
 }
 else
 {
     Console.WriteLine("Provide the input file path as an argument.");
-    return;
 }
