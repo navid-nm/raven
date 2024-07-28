@@ -7,8 +7,8 @@ tmp LaunchManager {
    }
 
    || app         -> AppInfo
-   || executeApp  -> Promise
    || steamPath   -> NullableString
+   || ExecuteApp  -> Promise
    open stc async ExecuteApp(app) {
       let cmdToRun= "${app.LaunchPath}";
       if (app.LaunchType == LaunchType.STEAMURL) {
@@ -22,6 +22,7 @@ tmp LaunchManager {
    || appinfs     -> AppInfo[]
    || entries     -> LibraryEntry[]
    || entryList   -> NullableLibraryEntry[]
+   || initialize  -> Promise
    hidden stc async initialize(appinfs) {
       let entries = await *getEntriesFromDisk();
 
