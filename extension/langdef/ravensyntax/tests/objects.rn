@@ -1,6 +1,5 @@
 tmp LibraryManager {
    closed stat my.library = new Library();
-   closed stat my.libraryPath = SaveManager.getLibraryPath();
    
    init {
       my.initialize()
@@ -45,4 +44,7 @@ tmp LibraryManager {
          }
       }
    }
+
+   closed stat async buildEntriesFromInfos() {}
+   closed stat async writeEntriesToDisk() {}
 }
