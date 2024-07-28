@@ -11,7 +11,7 @@ https://github.com/navid-nm/raven
 Example:
 
 `fn main() {
-    print("test")
+    say("test")
 }`
 
 Transpiles to the following JavaScript:

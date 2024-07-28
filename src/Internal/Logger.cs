@@ -1,5 +1,3 @@
-using System.Drawing;
-
 namespace Raven.Internal
 {
     public static class Logger

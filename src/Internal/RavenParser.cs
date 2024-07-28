@@ -90,7 +90,7 @@ namespace Raven.Internal
             var patterns = new (string pattern, string replacement)[]
             {
                 (@"\bfn\s*(\w*)\s*\(", "function $1("),
-                (@"\bprint\s*\(", "console.log("),
+                (@"\bsay\s*\(", "console.log("),
                 (@"\bwarn\s*\(", "console.error("),
                 (@"}\s*die\s*\(", "} catch ("),
                 (@"}\s*die\s*\(", "} catch ("),
@@ -102,7 +102,7 @@ namespace Raven.Internal
                 (@"\bdocument\.get\s*\(", "document.getElementById("),
                 (@"\bdocument\.make\s*\(", "document.createElement("),
                 (@"\bdocument\.listen\s*\(", "document.addEventListener("),
-                (@"\.AddSub\s*\(", ".appendChild("),
+                (@"\.put\s*\(", ".appendChild("),
                 (@"\.ClassName\b", ".className"),
                 (@"\.InnerHTML\b", ".innerHTML"),
                 (@"&ready", "\"DOMContentLoaded\"")

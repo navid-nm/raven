@@ -8,7 +8,7 @@ Examples:
 
 ```d
 fn main() {
-    print("test")
+    say("test")
 }
 ```
 
@@ -39,7 +39,7 @@ onready(fn() {
         const ProfileCard = doc.make("div")
         ProfileCard.ClassName = ProfileClass
         ProfileCard.InnerHTML = ProfileTemplate(User)
-        ProfileContainer.AddSub(ProfileCard)
+        ProfileContainer.put(ProfileCard)
     }
 })
 ```
@@ -55,9 +55,9 @@ templates/profile.rhtml:
 
 ```html
 <div class="profile">
-    <img src="${User.avatar}" alt="${User.name}">
-    <h2>${User.name}</h2>
-    <p>${User.bio}</p>
+   <img src="${User.avatar}" alt="${User.name}" />
+   <h2>${User.name}</h2>
+   <p>${User.bio}</p>
 </div>
 ```
 

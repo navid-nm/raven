@@ -11,6 +11,6 @@ onready(fn() {
         const ProfileCard = doc.make("div")
         ProfileCard.ClassName = ProfileClass
         ProfileCard.InnerHTML = ProfileTemplate(User)
-        ProfileContainer.AddSub(ProfileCard)
+        ProfileContainer.put(ProfileCard)
     }
 });
