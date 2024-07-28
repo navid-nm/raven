@@ -23,8 +23,8 @@ tmp LaunchManager {
       
       || retry          -> Boolean
       || err            -> Error
-      || attemptexec    -> Void
-      const attemptExec = (retry) => {
+      || attempt        -> Void
+      const attempt = (retry) => {
          ChildProcess.exec(cmdToRun, (err) => {
             if (err) {
                say(`Error: ${err.message}`);
@@ -32,13 +32,13 @@ tmp LaunchManager {
                   say("UAC access was denied. Not retrying.");
                } elif (retry) {
                   say("Retrying in 1 second.");
-                  wait(() => attemptExec(false), 1000);
+                  wait(() => attempt(false), 1000);
                } else {
                   say("Failed to start the app after retrying.");
                }
             }
          });
       };
-      attemptExec(true);
+      attempt(true);
    }
 }
