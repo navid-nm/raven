@@ -16,11 +16,18 @@ static void ProcessFile(string inputFilePath)
         {
             var parser = new RavenParser(sourceCode, path);
             var jsCode = parser.Transpile();
+
+            // Ensure the dist directory exists
+            var distDirectory = Path.Combine(path, "dist");
+            Directory.CreateDirectory(distDirectory);
+
+            // Save the transpiled code to the dist directory
             var outputFilePath = Path.Combine(
-                path,
+                distDirectory,
                 $"{Path.GetFileNameWithoutExtension(inputFilePath)}.js"
             );
             File.WriteAllText(outputFilePath, jsCode);
+
             Logger.Log($"Transpiled to -> {outputFilePath}", State.SUCCESS);
         }
         catch (Exception ex)

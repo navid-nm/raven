@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.RegularExpressions;
+using Esprima;
 
 namespace Raven.Internal
 {
@@ -36,7 +37,10 @@ namespace Raven.Internal
             // Handle template literals for multi-line strings
             sb = new StringBuilder(HandleTemplateLiterals(sb.ToString()));
 
-            return sb.ToString();
+            var transpiledCode = sb.ToString();
+            ValidateGeneratedECMA(transpiledCode);
+
+            return transpiledCode;
         }
 
         private string HandleImports(string code)
@@ -98,6 +102,38 @@ namespace Raven.Internal
                     return $"`{content}`";
                 }
             );
+        }
+
+        private static void ValidateGeneratedECMA(string jsCode)
+        {
+            try
+            {
+                var parser = new JavaScriptParser();
+                var program = parser.ParseScript(jsCode);
+            }
+            catch (ParserException ex)
+            {
+                var lineNumber = ex.LineNumber;
+                var message = ex.Description;
+
+                var identifierCode = Guid.NewGuid().ToString("N")[..5];
+                var tempPath = Path.GetTempPath();
+                var tempFilePath = Path.Combine(tempPath, $"{identifierCode}-debug.js");
+
+                File.WriteAllText(tempFilePath, jsCode);
+
+                System.Diagnostics.Process.Start(
+                    new System.Diagnostics.ProcessStartInfo
+                    {
+                        FileName = tempFilePath,
+                        UseShellExecute = true
+                    }
+                );
+
+                Logger.RaiseProblem(
+                    $"ECMA validation error at line {lineNumber}, column {ex.Column}: {message}\nError identifier: {identifierCode}"
+                );
+            }
         }
 
         [GeneratedRegex(@"import\s+(\w+)\s*;?")]
