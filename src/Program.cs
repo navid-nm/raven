@@ -64,7 +64,7 @@ else if (args.Length == 1)
 {
     if (args[0] == "--version")
     {
-        Console.WriteLine("0.0.5");
+        Console.WriteLine("1.0.0");
         return;
     }
     if (args[0] == "--api")
