@@ -12,13 +12,40 @@ fn main() {
 }
 ```
 
-Transpiles to the following JavaScript:
+Transpiles to the following JS:
 
 ```
 function main() {
     console.log("test");
 }
 ```
+
+---
+
+Typehints:
+
+```d
+|| cn       -> Connection
+|| video    -> Video
+|| err      -> Error
+cn.on("ReceiveVideo", fn(video)
+{
+    try {
+        say(
+            "Video received",
+            video
+        );
+    } die (err) {
+        warn(
+            "Error appending video card:",
+            err
+        )
+    }
+});
+
+```
+
+---
 
 Raven supports templating, which allows for importing HTML snippets and using them directly in JS code.
 This makes it easier to manage and reuse HTML structures.
