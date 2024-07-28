@@ -33,8 +33,10 @@ static void ProcessFile(string inputFilePath, bool useDistDirectory)
                 $"{Path.GetFileNameWithoutExtension(inputFilePath)}.js"
             );
             File.WriteAllText(outputFilePath, jsCode);
-
-            Logger.Log($"Transpiled to -> {outputFilePath}", State.SUCCESS);
+            if (!Glob.IsSilent)
+            {
+                Logger.Log($"Transpiled to -> {outputFilePath}", State.SUCCESS);
+            }
         }
         catch (Exception ex)
         {
@@ -64,12 +66,16 @@ else if (args.Length == 1)
 {
     if (args[0] == "--version")
     {
-        Console.WriteLine("1.0.0");
+        Console.WriteLine("1.0.1");
         return;
     }
     if (args[0] == "--api")
     {
         Glob.IsApi = true;
+    }
+    if (args[0] == "-s")
+    {
+        Glob.IsSilent = true;
     }
     else
     {

@@ -53,7 +53,7 @@ namespace Raven.Internal
             {
                 Logger.RaiseProblem($"Imported file '{importPath}' not found.");
             }
-            var importCode = File.ReadAllText(fullPath);
+            var importCode = File.ReadAllText(fullPath) + "\n";
             var importParser = new RavenParser(importCode, _basePath);
             return importParser.Transpile();
         }
