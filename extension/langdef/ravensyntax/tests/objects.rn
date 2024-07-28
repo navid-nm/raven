@@ -21,16 +21,20 @@ tmp LaunchManager {
 
    || appinfs     -> AppInfo[]
    || entries     -> LibraryEntry[]
+   || entryList   -> NullableLibraryEntry[]
    hidden stc async initialize(appinfs) {
       let entries = await *getEntriesFromDisk();
+
       if ((await entries.size()) == 0) {
          let entries = await *buildEntriesFromInfos(appinfs);
-         *library.set(new LibraryGroup(0, "Uncategorized"), entries);
+         *library.set(
+            new LibraryGroup(0, "Uncategorized"), 
+            entries
+         );
          await *writeEntriesToDisk();
+
       } else {
          let ulmap = await entries.getUnderlyingMap();
-
-         || entryList -> NullableLibraryEntry[]
          for (var entry of ulmap.keys()) {
             let entryList = ulmap.get(entry);
             if (entryList != undefined) {
