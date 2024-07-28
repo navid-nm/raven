@@ -1,0 +1,74 @@
+raw(const plyr = require("plyr"))
+raw(const { ipcRenderer } = require("electron/renderer"))
+
+|| escapeBackslashes  -> String
+|| path               -> String
+const escapeBackslashes = fn(path) {
+    return path.replace(/\\/g, "\\\\")
+}
+
+win.onload = async fn() {
+    try {
+        || fname              -> String
+        || albumArtPath       -> NullableString
+        || player             -> Plyr
+        || vp                 -> HTMLVideoElement
+        || tzone              -> Element
+        || playerContainer    -> Element
+        || primdims           -> Number[]
+        || primaryMonitorDims -> Number[]
+        || sourceElement      -> HTMLSourceElement
+        || mediaElement       -> HTMLMediaElement
+
+        let fname = localStorage.getItem("fname")
+        let albumArtPath = undefined
+        let player = new Plyr("#video-player")
+        let vp = doc.get("video-player")
+
+        if (fname) {
+            let tzone = doc.get("title-zone")
+
+            if (tzone != null) {
+                tzone.innerText = fname
+            }
+
+            if (audioExtensions.some(fn(ext) { return fname.endsWith(ext) })) {
+                say("Audio found.")
+                try {
+                    albumArtPath = await extractAlbumArt(fname)
+                    let playerContainer = doc.get("video-player")
+                    if (playerContainer) {
+                        playerContainer.style.maxHeight = "450px"
+                    }
+                    if (albumArtPath != undefined) {
+                        player = new Plyr("#video-player")
+                        player.poster = escapeBackslashes(albumArtPath)
+                        player.autoplay = true
+                    }
+                } die (error) {
+                    warn("Error extracting album art:", error)
+                }
+                ipcRenderer.send("resize-win", 900, 480)
+            } else {
+                wait(async fn() {
+                    say("Video dimensions: ${vp.videoHeight} x ${vp.videoWidth}")
+                    let primdims = []
+                }, 100)
+            }
+
+            let sourceElement = doc.get("source-element")
+
+            if (vp != undefined) {
+                if (albumArtPath != undefined) {
+                    vp.setAttribute("poster", albumArtPath)
+                }
+            }
+            sourceElement.setAttribute("src", fname)
+            let mediaElement = doc.query("video, audio")
+            mediaElement.load()
+            player.play()
+        }
+    } die (err) {
+        warn("Error in renderer.rn:", err)
+    }
+}
