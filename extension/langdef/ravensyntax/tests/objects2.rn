@@ -1,0 +1,44 @@
+xconst {
+    AppInfo             = use("../../service/models/appinfo")
+    LaunchType          = use("../../service/models/launchtype")
+    ProcStats           = use("../../service/data/processstats")
+    SteamPathManager    = use("./steampaths")
+    ChildProcess        = use("child_process")
+}
+
+
+tmp LaunchManager {
+   || app       -> AppInfo
+   || steamPath -> NullableString
+   || cmdToRun  -> String
+   || Execute   -> Promise 
+   open stc async Execute(app) {
+      let cmdToRun = "${app.LaunchPath}";
+      if (app.LaunchType == LaunchType.STEAMURL) {
+         let steamPath = SteamPathManager.getSteamPath();
+         if (steamPath != null) {
+            cmdToRun = steamPath + " " + cmdToRun;
+         }
+      }
+      
+      || retry          -> Boolean
+      || err            -> Error
+      || attemptexec    -> Void
+      const attemptExec = (retry) => {
+         ChildProcess.exec(cmdToRun, (err) => {
+            if (err) {
+               say(`Error: ${err.message}`);
+               if (err.code === ProcStats.explicitUacDenial) {
+                  say("UAC access was denied. Not retrying.");
+               } elif (retry) {
+                  say("Retrying in 1 second.");
+                  wait(() => attemptExec(false), 1000);
+               } else {
+                  say("Failed to start the app after retrying.");
+               }
+            }
+         });
+      };
+      attemptExec(true);
+   }
+}

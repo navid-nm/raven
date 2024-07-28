@@ -1,4 +1,4 @@
-tmp LaunchManager {
+tmp LibraryManager {
    hide stc library = new Library();
    hide stc libraryPath = SaveManager.getLibraryPath();
 
