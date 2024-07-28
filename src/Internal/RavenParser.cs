@@ -3,17 +3,11 @@ using Esprima;
 
 namespace Raven.Internal
 {
-    public partial class RavenParser
+    public partial class RavenParser(string sourceCode, string basePath)
     {
-        private readonly string _sourceCode;
-        private readonly string _basePath;
-        private readonly Dictionary<string, string> _typeHints = new();
-
-        public RavenParser(string sourceCode, string basePath)
-        {
-            _sourceCode = sourceCode;
-            _basePath = basePath;
-        }
+        private readonly string _sourceCode = sourceCode;
+        private readonly string _basePath = basePath;
+        private readonly Dictionary<string, string> _typeHints = [];
 
         public string Transpile()
         {
@@ -112,7 +106,7 @@ namespace Raven.Internal
             return code;
         }
 
-        private string ReplaceContextAware(string code)
+        private static string ReplaceContextAware(string code)
         {
             var patterns = new (string pattern, Func<Match, string> replacement)[]
             {
