@@ -3,16 +3,21 @@ using Esprima;
 
 namespace Raven.Internal
 {
-    public partial class RavenParser(string sourceCode, string basePath)
+    public partial class RavenParser
     {
-        private readonly string _sourceCode = sourceCode;
-        private readonly string _basePath = basePath;
-        private readonly Dictionary<string, string> _typeHints = [];
+        private readonly string _sourceCode;
+        private readonly string _basePath;
+        private readonly Dictionary<string, string> _typeHints = new();
+
+        public RavenParser(string sourceCode, string basePath)
+        {
+            _sourceCode = sourceCode;
+            _basePath = basePath;
+        }
 
         public string Transpile()
         {
             var code = HandleImports(_sourceCode);
-
             code = HandleTemplates(code);
             code = ExtractAndProcessTypeHints(code);
             code = HandleTemplateLiterals(code);
@@ -86,18 +91,17 @@ namespace Raven.Internal
 
         private string ExtractAndProcessTypeHints(string code)
         {
-            var typeHintPattern = @"\|\|\s*(\w+)\s*->\s*(\w+)";
+            var typeHintPattern = @"\|\|\s*(\w+)\s*->\s*[\w\[\]]+";
             var regex = new Regex(typeHintPattern);
             var matches = regex.Matches(code);
 
             foreach (Match match in matches)
             {
                 var variable = match.Groups[1].Value;
-                var type = match.Groups[2].Value;
 
                 if (!_typeHints.ContainsKey(variable))
                 {
-                    _typeHints[variable] = type;
+                    _typeHints[variable] = "type"; // Placeholder as type is not used further
                 }
 
                 code = code.Replace(match.Value, ""); // Remove the type hint from the code
@@ -106,35 +110,66 @@ namespace Raven.Internal
             return code;
         }
 
-        private static string ReplaceContextAware(string code)
+        private string ReplaceContextAware(string code)
         {
-            var patterns = new (string pattern, string replacement)[]
+            var patterns = new (string pattern, Func<Match, string> replacement)[]
             {
-                (@"\bfn\s*(\w*)\s*\(", "function $1("),
-                (@"\bsay\s*\(", "console.log("),
-                (@"\bwarn\s*\(", "console.error("),
-                (@"}\s*die\s*\(", "} catch ("),
-                (@"}\s*die\s*\(", "} catch ("),
-                (@"\)\s*\.die\s*\(", ").catch("),
-                (@"\bdoc\.", "document."),
-                (@"\bonready\s*\(", "document.addEventListener(\"DOMContentLoaded\","),
-                (@"\bonready\s*\(", "document.addEventListener(\"DOMContentLoaded\","),
-                (@"\.str\s*\(\)", ".toString()"),
-                (@"\bdocument\.get\s*\(", "document.getElementById("),
-                (@"\bdocument\.make\s*\(", "document.createElement("),
-                (@"\bdocument\.listen\s*\(", "document.addEventListener("),
-                (@"\.put\s*\(", ".appendChild("),
-                (@"\.ClassName\b", ".className"),
-                (@"\.InnerHTML\b", ".innerHTML"),
-                (@"&ready", "\"DOMContentLoaded\"")
+                (@"raw\((.*?)\)", match => match.Groups[1].Value),
+                (@"\bfn\s*(\w*)\s*\(", match => $"function {match.Groups[1].Value}("),
+                (@"\bsay\s*\(", match => "console.log("),
+                (@"\bwarn\s*\(", match => "console.error("),
+                (@"}\s*die\s*\(", match => "} catch ("),
+                (@"\)\s*\.die\s*\(", match => ").catch("),
+                (@"\bdoc\.", match => "document."),
+                (@"\bwin\.", match => "window."),
+                (@"\bonready\s*\(", match => "document.addEventListener(\"DOMContentLoaded\","),
+                (@"\.str\s*\(\)", match => ".toString()"),
+                (@"\bdocument\.get\s*\(", match => "document.getElementById("),
+                (@"\bdocument\.make\s*\(", match => "document.createElement("),
+                (@"\bdocument\.listen\s*\(", match => "document.addEventListener("),
+                (@"\.put\s*\(", match => ".appendChild("),
+                (@"\.ClassName\b", match => ".className"),
+                (@"\.InnerHTML\b", match => ".innerHTML"),
+                (@"&ready", match => "\"DOMContentLoaded\""),
+                (@"\bwait\s*\(", match => "setTimeout("),
+                (@"xlet\s*{([^}]*)}", ReplaceXlet),
+                (@"xset\((.*?)\)\s*{([^}]*)}", ReplaceXset)
             };
 
             foreach (var (pattern, replacement) in patterns)
             {
-                code = Regex.Replace(code, pattern, replacement);
+                code = Regex.Replace(
+                    code,
+                    pattern,
+                    new MatchEvaluator(replacement),
+                    RegexOptions.Singleline
+                );
             }
 
             return code;
+        }
+
+        private static string ReplaceXlet(Match match)
+        {
+            var declarations = match
+                .Groups[1]
+                .Value.Split('\n')
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Select(line => $"let {line.Trim()}");
+
+            return string.Join("\n", declarations);
+        }
+
+        private static string ReplaceXset(Match match)
+        {
+            var objectName = match.Groups[1].Value.Trim();
+            var properties = match
+                .Groups[2]
+                .Value.Split('\n')
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Select(line => $"{objectName}.{line.Trim()}");
+
+            return string.Join("\n", properties);
         }
 
         private static void ValidateGeneratedECMA(string jsCode, bool api = false)
@@ -142,7 +177,7 @@ namespace Raven.Internal
             try
             {
                 var parser = new JavaScriptParser();
-                var program = parser.ParseScript(jsCode);
+                parser.ParseScript(jsCode);
             }
             catch (ParserException ex)
             {
@@ -176,18 +211,16 @@ namespace Raven.Internal
 
         private static string GetLine(string code, int lineNumber)
         {
-            using (var reader = new StringReader(code))
+            using var reader = new StringReader(code);
+            string? line;
+            int currentLine = 0;
+            while ((line = reader.ReadLine()) != null)
             {
-                string? line;
-                int currentLine = 0;
-                while ((line = reader.ReadLine()) != null)
+                if (currentLine == lineNumber - 1)
                 {
-                    if (currentLine == lineNumber - 1)
-                    {
-                        return line;
-                    }
-                    currentLine++;
+                    return line;
                 }
+                currentLine++;
             }
             return string.Empty;
         }
