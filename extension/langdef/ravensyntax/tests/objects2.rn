@@ -12,7 +12,7 @@ tmp LaunchManager {
    || steamPath -> NullableString
    || cmdToRun  -> String
    || Execute   -> Promise 
-   open stc async Execute(app) {
+   open stat async Execute(app) {
       let cmdToRun = "${app.LaunchPath}";
       if (app.LaunchType == LaunchType.STEAMURL) {
          let steamPath = SteamPathManager.getSteamPath();

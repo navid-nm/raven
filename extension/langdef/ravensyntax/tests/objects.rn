@@ -1,15 +1,15 @@
 tmp LibraryManager {
-   hide stc library = new Library();
-   hide stc libraryPath = SaveManager.getLibraryPath();
-
+   closed stat my.library = new Library();
+   closed stat my.libraryPath = SaveManager.getLibraryPath();
+   
    init {
-      *initialize()
+      my.initialize()
    }
-
+   
    || app         -> AppInfo
    || steamPath   -> NullableString
    || ExecuteApp  -> Promise
-   open stc async ExecuteApp(app) {
+   open stat async ExecuteApp(app) {
       let cmdToRun= "${app.LaunchPath}";
       if (app.LaunchType == LaunchType.STEAMURL) {
          let steamPath = SteamPathManager.getSteamPath();
@@ -23,16 +23,16 @@ tmp LibraryManager {
    || entries     -> LibraryEntry[]
    || entryList   -> NullableLibraryEntry[]
    || initialize  -> Promise
-   hide stc async initialize(appinfs) {
-      let entries = await *getEntriesFromDisk();
+   closed stat async initialize(appinfs) {
+      let entries = await my.getEntriesFromDisk();
 
       if ((await entries.size()) == 0) {
-         let entries = await *buildEntriesFromInfos(appinfs);
-         *library.set(
+         let entries = await my.buildEntriesFromInfos(appinfs);
+         my.library.set(
             new LibraryGroup(0, "Uncategorized"), 
             entries
          );
-         await *writeEntriesToDisk();
+         await my.writeEntriesToDisk();
 
       } else {
          let ulmap = await entries.getUnderlyingMap();
@@ -40,7 +40,7 @@ tmp LibraryManager {
             let entryList = ulmap.get(entry);
             if (entryList != undefined) {
                say("Setting library entry for", entry);
-               *library.set(entry, entryList);
+               my.library.set(entry, entryList);
             }
          }
       }
