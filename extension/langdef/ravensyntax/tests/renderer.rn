@@ -20,10 +20,12 @@ win.onload = async fn() {
         || sourceElement      -> HTMLSourceElement
         || mediaElement       -> HTMLMediaElement
 
-        let fname = localStorage.getItem("fname")
-        let albumArtPath = undefined
-        let player = new Plyr("#video-player")
-        let vp = doc.get("video-player")
+        xlet {
+            fname = localStorage.getItem("fname")
+            albumArtPath = undefined
+            player = new Plyr("#video-player")
+            vp = doc.get("video-player")
+        }
 
         if (fname) {
             let tzone = doc.get("title-zone")
@@ -32,7 +34,12 @@ win.onload = async fn() {
                 tzone.innerText = fname
             }
 
-            if (audioExtensions.some(fn(ext) { return fname.endsWith(ext) })) {
+            if (audioExtensions.some(
+                    fn(ext) { 
+                        return fname.endsWith(ext) 
+                    })
+                ) 
+            {
                 say("Audio found.")
                 try {
                     albumArtPath = await extractAlbumArt(fname)
@@ -42,8 +49,10 @@ win.onload = async fn() {
                     }
                     if (albumArtPath != undefined) {
                         player = new Plyr("#video-player")
-                        player.poster = escapeBackslashes(albumArtPath)
-                        player.autoplay = true
+                        xset(player) {
+                            poster = escapeBackslashes(albumArtPath)
+                            autoplay = true
+                        }
                     }
                 } die (error) {
                     warn("Error extracting album art:", error)
