@@ -1,6 +1,8 @@
 # Raven
 
-Raven is a simple transpiler that affords syntactic sugar over JS, aiming to make JS less ugly without adding anything else.
+Transpiler that affords syntactic sugar over JS, aiming to make JS less ugly without adding any complexity.
+
+Reason: JS sucks ass, is verbose and ugly, and is sometimes unavoidable.
 
 ---
 
@@ -33,7 +35,7 @@ cn.on("ReceiveVideo", fn(video)
     try {
         say(
             "Video received",
-            video
+            video.str()
         );
     } die (err) {
         warn(
