@@ -3,17 +3,11 @@ using Esprima;
 
 namespace Raven.Internal
 {
-    public partial class RavenParser
+    public partial class RavenParser(string sourceCode, string basePath)
     {
-        private readonly string _sourceCode;
-        private readonly string _basePath;
-        private readonly Dictionary<string, string> _typeHints = new();
-
-        public RavenParser(string sourceCode, string basePath)
-        {
-            _sourceCode = sourceCode;
-            _basePath = basePath;
-        }
+        private readonly string _sourceCode = sourceCode;
+        private readonly string _basePath = basePath;
+        private readonly Dictionary<string, string> _typeHints = [];
 
         public string Transpile()
         {
@@ -172,22 +166,22 @@ namespace Raven.Internal
             code = StaticAsyncRegex().Replace(code, "async $1#$2");
 
             // Fix for space between # and variable name
-            code = Regex.Replace(code, @"#\s+(\w+)", "#$1");
+            code = PrivateMemberSpaceRegex().Replace(code, "#$1");
 
             // Fix for private member references
-            code = Regex.Replace(
-                code,
-                @"\b(this\.)\w+\b",
-                match =>
-                {
-                    var member = match.Value;
-                    if (member.StartsWith("this."))
+            code = PrivateMemberReferenceRegex()
+                .Replace(
+                    code,
+                    match =>
                     {
-                        return member.Replace("this.", "this.#");
+                        var member = match.Value;
+                        if (member.StartsWith("this."))
+                        {
+                            return member.Replace("this.", "this.#");
+                        }
+                        return member;
                     }
-                    return member;
-                }
-            );
+                );
 
             return code;
         }
@@ -301,5 +295,11 @@ namespace Raven.Internal
 
         [GeneratedRegex(@"async\s+#\s*(static\s+)?(\w+\s*\()", RegexOptions.Singleline)]
         private static partial Regex StaticAsyncRegex();
+
+        [GeneratedRegex(@"#\s+(\w+)")]
+        private static partial Regex PrivateMemberSpaceRegex();
+
+        [GeneratedRegex(@"\b(this\.)\w+\b")]
+        private static partial Regex PrivateMemberReferenceRegex();
     }
 }
