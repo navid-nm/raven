@@ -1,10 +1,11 @@
 ﻿using Raven.Internal;
 
-static void ProcessFile(string inputFilePath)
+static void ProcessFile(string inputFilePath, bool useDistDirectory)
 {
     if (!File.Exists(inputFilePath))
     {
         Logger.RaiseProblem($"The input file '{inputFilePath}' does not exist.");
+        return;
     }
 
     var sourceCode = File.ReadAllText(inputFilePath);
@@ -17,13 +18,18 @@ static void ProcessFile(string inputFilePath)
             var parser = new RavenParser(sourceCode, path);
             var jsCode = parser.Transpile();
 
-            // Ensure the dist directory exists
-            var distDirectory = Path.Combine(path, "dist");
-            Directory.CreateDirectory(distDirectory);
+            // Determine output directory
+            var outputDirectory = useDistDirectory ? Path.Combine(path, "dist") : path;
 
-            // Save the transpiled code to the dist directory
+            // Ensure the directory exists if using 'dist' directory
+            if (useDistDirectory)
+            {
+                Directory.CreateDirectory(outputDirectory);
+            }
+
+            // Save the transpiled code
             var outputFilePath = Path.Combine(
-                distDirectory,
+                outputDirectory,
                 $"{Path.GetFileNameWithoutExtension(inputFilePath)}.js"
             );
             File.WriteAllText(outputFilePath, jsCode);
@@ -37,6 +43,8 @@ static void ProcessFile(string inputFilePath)
     }
 }
 
+bool useDistDirectory = false;
+
 if (args.Length == 0)
 {
     string currentDirectory = Directory.GetCurrentDirectory();
@@ -49,7 +57,7 @@ if (args.Length == 0)
     }
     foreach (var ravenFile in ravenFiles)
     {
-        ProcessFile(ravenFile);
+        ProcessFile(ravenFile, useDistDirectory);
     }
 }
 else if (args.Length == 1)
@@ -63,10 +71,26 @@ else if (args.Length == 1)
     {
         Glob.IsApi = true;
     }
-    var inputFilePath = args[0];
+    else
+    {
+        var inputFilePath = args[0];
+        if (File.Exists(inputFilePath) && Path.GetExtension(inputFilePath) == ".rn")
+        {
+            ProcessFile(inputFilePath, useDistDirectory);
+        }
+        else
+        {
+            Console.WriteLine("Provide a valid .rn file path as an argument.");
+        }
+    }
+}
+else if (args.Length == 2 && args[0] == "-d")
+{
+    useDistDirectory = true;
+    var inputFilePath = args[1];
     if (File.Exists(inputFilePath) && Path.GetExtension(inputFilePath) == ".rn")
     {
-        ProcessFile(inputFilePath);
+        ProcessFile(inputFilePath, useDistDirectory);
     }
     else
     {
@@ -75,5 +99,5 @@ else if (args.Length == 1)
 }
 else
 {
-    Console.WriteLine("Provide the input file path as an argument.");
+    Console.WriteLine("Invalid arguments. Usage: [-d] [<input file path(s)>]");
 }
