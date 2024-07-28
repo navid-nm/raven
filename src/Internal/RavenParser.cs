@@ -171,6 +171,24 @@ namespace Raven.Internal
             code = StaticRegex().Replace(code, "static $1#$2");
             code = StaticAsyncRegex().Replace(code, "async $1#$2");
 
+            // Fix for space between # and variable name
+            code = Regex.Replace(code, @"#\s+(\w+)", "#$1");
+
+            // Fix for private member references
+            code = Regex.Replace(
+                code,
+                @"\b(this\.)\w+\b",
+                match =>
+                {
+                    var member = match.Value;
+                    if (member.StartsWith("this."))
+                    {
+                        return member.Replace("this.", "this.#");
+                    }
+                    return member;
+                }
+            );
+
             return code;
         }
 

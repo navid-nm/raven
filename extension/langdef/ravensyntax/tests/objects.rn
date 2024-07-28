@@ -1,9 +1,7 @@
 tmp LibraryManager {
-   closed stat my.library = new Library();
+   closed stat library = new Library();
    
-   init {
-      my.initialize()
-   }
+   init {}
    
    || app         -> AppInfo
    || steamPath   -> NullableString
@@ -49,4 +47,5 @@ tmp LibraryManager {
 
    closed stat async buildEntriesFromInfos() {}
    closed stat async writeEntriesToDisk() {}
+   closed stat async getEntriesFromDisk() {}
 }
