@@ -7,16 +7,15 @@ namespace Raven.Internal
     {
         private readonly string _sourceCode = sourceCode;
         private readonly string _basePath = basePath;
+        private readonly Dictionary<string, string> _typeHints = [];
 
         public string Transpile()
         {
             var code = HandleImports(_sourceCode);
+
             code = HandleTemplates(code);
-
-            // Handle template literals for multi-line strings
+            code = ExtractAndProcessTypeHints(code);
             code = HandleTemplateLiterals(code);
-
-            // Context-aware replacements using regular expressions
             code = ReplaceContextAware(code);
 
             ValidateGeneratedECMA(code, Glob.IsApi);
@@ -85,7 +84,29 @@ namespace Raven.Internal
             );
         }
 
-        private string ReplaceContextAware(string code)
+        private string ExtractAndProcessTypeHints(string code)
+        {
+            var typeHintPattern = @"\|\|\s*(\w+)\s*->\s*(\w+)";
+            var regex = new Regex(typeHintPattern);
+            var matches = regex.Matches(code);
+
+            foreach (Match match in matches)
+            {
+                var variable = match.Groups[1].Value;
+                var type = match.Groups[2].Value;
+
+                if (!_typeHints.ContainsKey(variable))
+                {
+                    _typeHints[variable] = type;
+                }
+
+                code = code.Replace(match.Value, ""); // Remove the type hint from the code
+            }
+
+            return code;
+        }
+
+        private static string ReplaceContextAware(string code)
         {
             var patterns = new (string pattern, string replacement)[]
             {

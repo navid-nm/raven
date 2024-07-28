@@ -19,6 +19,9 @@
       },
       {
          "include": "#try-catch"
+      },
+      {
+         "include": "#type-hints"
       }
    ],
    "repository": {
@@ -27,6 +30,10 @@
             {
                "name": "comment.line.double-slash.raven",
                "match": "//.*$"
+            },
+            {
+               "name": "comment.line.typehint.raven",
+               "match": "\\|\\|\\s*\\w+\\s*->\\s*\\w+"
             }
          ]
       },
@@ -73,6 +80,34 @@
             {
                "name": "keyword.control.trycatch.raven",
                "match": "\\b(try|die)\\b"
+            }
+         ]
+      },
+      "type-hints": {
+         "patterns": [
+            {
+               "name": "meta.typehint.raven",
+               "begin": "\\|\\|\\s*\\w+\\s*->\\s*\\w+",
+               "end": "(?=\\n|$)",
+               "patterns": [
+                  {
+                     "name": "keyword.operator.typehint.raven",
+                     "match": "->"
+                  },
+                  {
+                     "name": "variable.parameter.typehint.raven",
+                     "match": "\\|\\|\\s*\\w+",
+                     "captures": {
+                        "0": {
+                           "name": "variable.parameter.typehint.raven"
+                        }
+                     }
+                  },
+                  {
+                     "name": "storage.type.typehint.raven",
+                     "match": "\\w+$"
+                  }
+               ]
             }
          ]
       }
