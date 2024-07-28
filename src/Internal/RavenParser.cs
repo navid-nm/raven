@@ -3,11 +3,17 @@ using Esprima;
 
 namespace Raven.Internal
 {
-    public partial class RavenParser(string sourceCode, string basePath)
+    public partial class RavenParser
     {
-        private readonly string _sourceCode = sourceCode;
-        private readonly string _basePath = basePath;
-        private readonly Dictionary<string, string> _typeHints = [];
+        private readonly string _sourceCode;
+        private readonly string _basePath;
+        private readonly Dictionary<string, string> _typeHints = new();
+
+        public RavenParser(string sourceCode, string basePath)
+        {
+            _sourceCode = sourceCode;
+            _basePath = basePath;
+        }
 
         public string Transpile()
         {
@@ -106,7 +112,7 @@ namespace Raven.Internal
             return code;
         }
 
-        private static string ReplaceContextAware(string code)
+        private string ReplaceContextAware(string code)
         {
             var patterns = new (string pattern, Func<Match, string> replacement)[]
             {
@@ -131,7 +137,18 @@ namespace Raven.Internal
                 (@"&ready", match => "\"DOMContentLoaded\""),
                 (@"\bwait\s*\(", match => "setTimeout("),
                 (@"xlet\s*{([^}]*)}", ReplaceXlet),
-                (@"xset\((.*?)\)\s*{([^}]*)}", ReplaceXset)
+                (@"xset\((.*?)\)\s*{([^}]*)}", ReplaceXset),
+                (@"xconst\s*{([^}]*)}", ReplaceXconst),
+                (@"xvar\s*{([^}]*)}", ReplaceXvar),
+                (@"\bclosed\s+stat\b", match => "static #"),
+                (@"\bopen\s+stat\b", match => "static "),
+                (@"\bclosed\s+async\b", match => "async #"),
+                (@"\bopen\s+async\b", match => "async "),
+                (@"\btmp\s+(\w+)\b", match => $"class {match.Groups[1].Value}"),
+                (@"\bstat\s+(\w+)\b", match => $"static {match.Groups[1].Value}"),
+                (@"\bmy\.", match => "this."),
+                (@"\binit\s*\(", match => "constructor("),
+                (@"\belif\b", match => "else if")
             };
 
             foreach (var (pattern, replacement) in patterns)
@@ -168,6 +185,28 @@ namespace Raven.Internal
                 .Select(line => $"{objectName}.{line.Trim()}");
 
             return string.Join("\n", properties);
+        }
+
+        private static string ReplaceXconst(Match match)
+        {
+            var declarations = match
+                .Groups[1]
+                .Value.Split('\n')
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Select(line => $"const {line.Trim()}");
+
+            return string.Join("\n", declarations);
+        }
+
+        private static string ReplaceXvar(Match match)
+        {
+            var declarations = match
+                .Groups[1]
+                .Value.Split('\n')
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Select(line => $"var {line.Trim()}");
+
+            return string.Join("\n", declarations);
         }
 
         private static void ValidateGeneratedECMA(string jsCode, bool api = false)
