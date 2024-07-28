@@ -3,11 +3,17 @@ using Esprima;
 
 namespace Raven.Internal
 {
-    public partial class RavenParser(string sourceCode, string basePath)
+    public partial class RavenParser
     {
-        private readonly string _sourceCode = sourceCode;
-        private readonly string _basePath = basePath;
-        private readonly Dictionary<string, string> _typeHints = [];
+        private readonly string _sourceCode;
+        private readonly string _basePath;
+        private readonly Dictionary<string, string> _typeHints = new();
+
+        public RavenParser(string sourceCode, string basePath)
+        {
+            _sourceCode = sourceCode;
+            _basePath = basePath;
+        }
 
         public string Transpile()
         {
@@ -141,7 +147,13 @@ namespace Raven.Internal
                 (@"\btmp\s+(\w+)\b", match => $"class {match.Groups[1].Value}"),
                 (@"\bstat\s+(\w+)\b", match => $"static {match.Groups[1].Value}"),
                 (@"\bmy\.", match => "this."),
-                (@"\binit\s*\(", match => "constructor("),
+                (
+                    @"\binit\s*(\([^)]*\))?\s*{",
+                    match =>
+                        "constructor"
+                        + (match.Groups[1].Value != string.Empty ? match.Groups[1].Value : "()")
+                        + " {"
+                ),
                 (@"\belif\b", match => "else if")
             };
 
@@ -154,6 +166,10 @@ namespace Raven.Internal
                     RegexOptions.Singleline
                 );
             }
+
+            // Fix for # placement in static async and similar issues
+            code = StaticRegex().Replace(code, "static $1#$2");
+            code = StaticAsyncRegex().Replace(code, "async $1#$2");
 
             return code;
         }
@@ -261,5 +277,11 @@ namespace Raven.Internal
 
         [GeneratedRegex(@"rhtml\(""(.*?)""\)")]
         private static partial Regex TemplatePatternRegex();
+
+        [GeneratedRegex(@"static\s+#\s*(async\s+)?(\w+\s*\()", RegexOptions.Singleline)]
+        private static partial Regex StaticRegex();
+
+        [GeneratedRegex(@"async\s+#\s*(static\s+)?(\w+\s*\()", RegexOptions.Singleline)]
+        private static partial Regex StaticAsyncRegex();
     }
 }
