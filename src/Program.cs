@@ -59,6 +59,10 @@ else if (args.Length == 1)
         Console.WriteLine("0.0.2");
         return;
     }
+    if (args[0] == "--api")
+    {
+        Glob.IsApi = true;
+    }
     var inputFilePath = args[0];
     if (File.Exists(inputFilePath) && Path.GetExtension(inputFilePath) == ".rn")
     {

@@ -38,7 +38,7 @@ namespace Raven.Internal
             sb = new StringBuilder(HandleTemplateLiterals(sb.ToString()));
 
             var transpiledCode = sb.ToString();
-            ValidateGeneratedECMA(transpiledCode);
+            ValidateGeneratedECMA(transpiledCode, Glob.IsApi);
 
             return transpiledCode;
         }
@@ -104,7 +104,7 @@ namespace Raven.Internal
             );
         }
 
-        private static void ValidateGeneratedECMA(string jsCode)
+        private static void ValidateGeneratedECMA(string jsCode, bool api = false)
         {
             try
             {
@@ -129,11 +129,34 @@ namespace Raven.Internal
                         UseShellExecute = true
                     }
                 );
-
-                Logger.RaiseProblem(
-                    $"ECMA validation error at line {lineNumber}, column {ex.Column}: {message}\nError identifier: {identifierCode}"
-                );
+                string totalMessage =
+                    $"ECMA validation error at line {lineNumber}, "
+                    + $"column {ex.Column}: {message}"
+                    + $"\nError identifier: {identifierCode}";
+                if (api)
+                {
+                    totalMessage += $"\nBad generated code: {GetLine(jsCode, lineNumber)}";
+                }
+                Logger.RaiseProblem(message: totalMessage, fatal: true, colored: !api);
             }
+        }
+
+        private static string GetLine(string code, int lineNumber)
+        {
+            using (var reader = new StringReader(code))
+            {
+                string? line;
+                int currentLine = 0;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    if (currentLine == lineNumber - 1)
+                    {
+                        return line;
+                    }
+                    currentLine++;
+                }
+            }
+            return string.Empty;
         }
 
         [GeneratedRegex(@"import\s+(\w+)\s*;?")]
