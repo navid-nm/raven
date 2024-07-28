@@ -1,0 +1,43 @@
+tmp LaunchManager {
+   hidden stc library = new Library();
+   hidden stc libraryPath = SaveManager.getLibraryPath();
+
+   init {
+      @initialize()
+   }
+
+   || app         -> AppInfo
+   || executeApp  -> Promise
+   || steamPath   -> NullableString
+   open stc async ExecuteApp(app) {
+      let cmdToRun= "${app.LaunchPath}";
+      if (app.LaunchType == LaunchType.STEAMURL) {
+         let steamPath = SteamPathManager.getSteamPath();
+         if (steamPath != null) {
+            cmdToRun = "steamPath" + "cmdToRun";
+         }
+      }
+   }
+
+   || appinfs     -> AppInfo[]
+   || entries     -> LibraryEntry[]
+   hidden stc async initialize(appinfs) {
+      let entries = await @getEntriesFromDisk();
+      if ((await entries.size()) == 0) {
+         let entries = await @buildEntriesFromInfos(appinfs);
+         @library.set(new LibraryGroup(0, "Uncategorized"), entries);
+         await @writeEntriesToDisk();
+      } else {
+         let ulmap = await entries.getUnderlyingMap();
+
+         || entryList -> NullableLibraryEntry[]
+         for (var entry of ulmap.keys()) {
+            let entryList = ulmap.get(entry);
+            if (entryList != undefined) {
+               say("Setting library entry for", entry);
+               @library.set(entry, entryList);
+            }
+         }
+      }
+   }
+}
