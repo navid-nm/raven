@@ -73,7 +73,13 @@ onready(fn() {
 })
 ```
 
-user.rn:
+Use the .rnm extension for importable modules.
+
+It indicates to the transpiler to include the module content in the program that is using it (in this case main.rn).
+
+This way 1 .js is generated (main.js), rather than 2 (main.js and user.js).
+
+user.rnm:
 
 ```d
 const ProfileClass = "profile-card"
