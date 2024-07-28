@@ -6,7 +6,6 @@ xconst {
     ChildProcess        = use("child_process")
 }
 
-
 tmp LaunchManager {
    || app       -> AppInfo
    || steamPath -> NullableString
