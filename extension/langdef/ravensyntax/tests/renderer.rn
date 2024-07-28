@@ -21,10 +21,10 @@ win.onload = async fn() {
         || mediaElement       -> HTMLMediaElement
 
         xlet {
-            fname = localStorage.getItem("fname")
-            albumArtPath = undefined
-            player = new Plyr("#video-player")
-            vp = doc.get("video-player")
+            fname           = localStorage.getItem("fname")
+            albumArtPath    = undefined
+            player          = new Plyr("#video-player")
+            vp              = doc.get("video-player")
         }
 
         if (fname) {
@@ -50,8 +50,8 @@ win.onload = async fn() {
                     if (albumArtPath != undefined) {
                         player = new Plyr("#video-player")
                         xset(player) {
-                            poster = escapeBackslashes(albumArtPath)
-                            autoplay = true
+                            poster      = escapeBackslashes(albumArtPath)
+                            autoplay    = true
                         }
                     }
                 } die (error) {
@@ -59,10 +59,13 @@ win.onload = async fn() {
                 }
                 ipcRenderer.send("resize-win", 900, 480)
             } else {
-                wait(async fn() {
-                    say("Video dimensions: ${vp.videoHeight} x ${vp.videoWidth}")
-                    let primdims = []
-                }, 100)
+                wait(
+                    async fn() {
+                        say("Video dimensions: ${vp.videoHeight} x ${vp.videoWidth}")
+                        let primdims = []
+                    }, 
+                    100
+                )
             }
 
             let sourceElement = doc.get("source-element")
