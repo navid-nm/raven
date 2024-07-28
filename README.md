@@ -24,7 +24,7 @@ function main() {
 
 Typehints:
 
-```typescript
+```d
 || cn       -> Connection
 || video    -> Video
 || err      -> Error
