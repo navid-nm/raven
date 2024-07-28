@@ -8,16 +8,49 @@ https://github.com/navid-nm/raven
 
 ---
 
-Example:
+Simple example:
 
-`fn main() {
+```
+fn main() {
     say("test")
-}`
+}
+```
 
 Transpiles to the following JavaScript:
 
-`function main() {
+```
+function main() {
     console.log("test");
-}`
+}
+```
+
+Typehints:
+
+```
+|| cn       -> Connection
+|| video    -> Video
+|| err      -> Error
+cn.on("ReceiveVideo", fn(video)
+{
+    try {
+        say(
+            "Video received",
+            video
+        );
+    } die (err) {
+        warn(
+            "Error appending video card:",
+            err
+        )
+    }
+});
+```
+
+---
+
+##### Notes
+
+-  Includes builtin HTML templating via .rhtml files and the rhtml() builtin.
+-  Has inline JS capability if really required
 
 ---
