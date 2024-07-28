@@ -1,4 +1,3 @@
-using System.Text;
 using System.Text.RegularExpressions;
 using Esprima;
 
@@ -14,33 +13,15 @@ namespace Raven.Internal
             var code = HandleImports(_sourceCode);
             code = HandleTemplates(code);
 
-            var sb = new StringBuilder(code);
-
-            sb.Replace("fn(", "function(");
-            sb.Replace("print(", "console.log(");
-            sb.Replace("warn(", "console.error(");
-            sb.Replace("} die (", "} catch (");
-            sb.Replace("} die(", "} catch (");
-            sb.Replace(").die(", ").catch(");
-            sb.Replace("doc.", "document.");
-            sb.Replace("onready(", "document.addEventListener(\"DOMContentLoaded\",");
-            sb.Replace("onready (", "document.addEventListener(\"DOMContentLoaded\",");
-            sb.Replace(".str()", ".toString()");
-            sb.Replace("document.get(\"", "document.getElementById(\"");
-            sb.Replace("document.make(\"", "document.createElement(\"");
-            sb.Replace("document.listen(", "document.addEventListener(");
-            sb.Replace(".AddSub(", ".appendChild(");
-            sb.Replace(".ClassName", ".className");
-            sb.Replace(".InnerHTML", ".innerHTML");
-            sb.Replace("&ready", "\"DOMContentLoaded\"");
-
             // Handle template literals for multi-line strings
-            sb = new StringBuilder(HandleTemplateLiterals(sb.ToString()));
+            code = HandleTemplateLiterals(code);
 
-            var transpiledCode = sb.ToString();
-            ValidateGeneratedECMA(transpiledCode, Glob.IsApi);
+            // Context-aware replacements using regular expressions
+            code = ReplaceContextAware(code);
 
-            return transpiledCode;
+            ValidateGeneratedECMA(code, Glob.IsApi);
+
+            return code;
         }
 
         private string HandleImports(string code)
@@ -102,6 +83,37 @@ namespace Raven.Internal
                     return $"`{content}`";
                 }
             );
+        }
+
+        private string ReplaceContextAware(string code)
+        {
+            var patterns = new (string pattern, string replacement)[]
+            {
+                (@"\bfn\s*(\w*)\s*\(", "function $1("),
+                (@"\bprint\s*\(", "console.log("),
+                (@"\bwarn\s*\(", "console.error("),
+                (@"}\s*die\s*\(", "} catch ("),
+                (@"}\s*die\s*\(", "} catch ("),
+                (@"\)\s*\.die\s*\(", ").catch("),
+                (@"\bdoc\.", "document."),
+                (@"\bonready\s*\(", "document.addEventListener(\"DOMContentLoaded\","),
+                (@"\bonready\s*\(", "document.addEventListener(\"DOMContentLoaded\","),
+                (@"\.str\s*\(\)", ".toString()"),
+                (@"\bdocument\.get\s*\(", "document.getElementById("),
+                (@"\bdocument\.make\s*\(", "document.createElement("),
+                (@"\bdocument\.listen\s*\(", "document.addEventListener("),
+                (@"\.AddSub\s*\(", ".appendChild("),
+                (@"\.ClassName\b", ".className"),
+                (@"\.InnerHTML\b", ".innerHTML"),
+                (@"&ready", "\"DOMContentLoaded\"")
+            };
+
+            foreach (var (pattern, replacement) in patterns)
+            {
+                code = Regex.Replace(code, pattern, replacement);
+            }
+
+            return code;
         }
 
         private static void ValidateGeneratedECMA(string jsCode, bool api = false)
