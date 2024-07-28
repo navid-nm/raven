@@ -1,6 +1,6 @@
 tmp LaunchManager {
-   hidden stc library = new Library();
-   hidden stc libraryPath = SaveManager.getLibraryPath();
+   hide stc library = new Library();
+   hide stc libraryPath = SaveManager.getLibraryPath();
 
    init {
       *initialize()
@@ -23,7 +23,7 @@ tmp LaunchManager {
    || entries     -> LibraryEntry[]
    || entryList   -> NullableLibraryEntry[]
    || initialize  -> Promise
-   hidden stc async initialize(appinfs) {
+   hide stc async initialize(appinfs) {
       let entries = await *getEntriesFromDisk();
 
       if ((await entries.size()) == 0) {
@@ -36,7 +36,7 @@ tmp LaunchManager {
 
       } else {
          let ulmap = await entries.getUnderlyingMap();
-         for (var entry of ulmap.keys()) {
+         for (var entry in ulmap.keys()) {
             let entryList = ulmap.get(entry);
             if (entryList != undefined) {
                say("Setting library entry for", entry);
