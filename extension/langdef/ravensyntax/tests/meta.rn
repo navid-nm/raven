@@ -2,7 +2,6 @@ use path
 use fs
 use os
 
-// This is a single line abbrev. It should also work.
 abbrev write = writeFileSync
 
 ||filePath          -> String
@@ -13,11 +12,7 @@ open async fn extractAlbumArt(filePath) {
         mm          = use("music-metadata")
         metadata    = await mm.parseFile(filePath)
       }
-      if (
-         metadata.common &&
-         metadata.common.picture &&
-         metadata.common.picture.length > 0
-      ) {
+      if (metadata.common && metadata.common.picture && metadata.common.picture.length > 0) {
          xconst  {
             pictureData = metadata.common.picture[0]
             tempDir     = os.tmpdir()
