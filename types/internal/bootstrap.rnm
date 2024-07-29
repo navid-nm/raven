@@ -1,0 +1,6 @@
+xconst {
+    fs = use("fs")
+    ts = use("typescript")
+    inputString = fs.readFileSync(theInputFile, "utf8")
+    fileName = "virtual.js"
+}

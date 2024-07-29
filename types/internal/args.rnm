@@ -3,10 +3,5 @@ if (args.length !== 1) {
    process.exit(1)
 }
 
-xconst {
-    fs = use("fs")
-    ts = use("typescript")
-    args = process.argv.slice(2)
-    inputString = fs.readFileSync(args[0], "utf8")
-    fileName = "virtual.js"
-}
+args            = process.argv.slice(2)
+theInputFile    = args[0]

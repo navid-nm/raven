@@ -1,8 +1,10 @@
 import internal.args
+import internal.bootstrap
 
 const compilerOptions = 
 { 
-    allowJs: true, checkJs: true 
+    allowJs: true, 
+    checkJs: true 
 }
 
 const host = ts.createCompilerHost(compilerOptions)
@@ -21,7 +23,14 @@ xconst
 
 const isPrimitiveTypeError = (diagnostic) => 
 {
-    const primitiveTypeErrors = new Set([2322, 2326, 2362, 2363]); 
+    const primitiveTypeErrors = new Set(
+        [
+            2322, 
+            2326, 
+            2362, 
+            2363
+        ]
+    ); 
     return primitiveTypeErrors.has(diagnostic.code);
 }
 
