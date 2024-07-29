@@ -31,7 +31,8 @@ namespace Raven.Internal
             foreach (Match match in matches)
             {
                 var importPath = match.Groups[1].Value;
-                code = code.Replace(match.Value, ReadAndTranspileImport(importPath));
+                var transpiledImport = ReadAndTranspileImport(importPath);
+                code = code.Replace(match.Value, transpiledImport);
             }
             return code;
         }
@@ -50,11 +51,15 @@ namespace Raven.Internal
 
         private string ReadAndTranspileImport(string importPath)
         {
-            var fullPath = Path.Combine(_basePath, importPath + ".rnm");
+            // Replace periods with directory separators
+            var relativePath = importPath.Replace('.', Path.DirectorySeparatorChar);
+            var fullPath = Path.Combine(_basePath, relativePath + ".rnm");
+
             if (!File.Exists(fullPath))
             {
-                Logger.RaiseProblem($"Imported file '{importPath}' not found.");
+                Logger.RaiseProblem($"Imported file '{importPath}' not found at '{fullPath}'.");
             }
+
             var importCode = File.ReadAllText(fullPath) + "\n";
             var importParser = new RavenParser(importCode, _basePath);
             return importParser.Transpile();
@@ -357,7 +362,7 @@ namespace Raven.Internal
             return string.Empty;
         }
 
-        [GeneratedRegex(@"import\s+(\w+)\s*;?")]
+        [GeneratedRegex(@"import\s+([\w\.]+)\s*;?")]
         private static partial Regex ImportPatternRegex();
 
         [GeneratedRegex(@"use\s+(\w+)\s*")]

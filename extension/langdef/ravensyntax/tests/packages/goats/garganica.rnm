@@ -1,0 +1,3 @@
+fn hello() { 
+    say("this is a type of goat")
+}

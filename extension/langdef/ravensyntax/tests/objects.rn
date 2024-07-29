@@ -1,7 +1,9 @@
 tmp LibraryManager {
    closed stat library = new Library();
    
-   init {}
+   init {
+      
+   }
    
    || app         -> AppInfo
    || steamPath   -> NullableString

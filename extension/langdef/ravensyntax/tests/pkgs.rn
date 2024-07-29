@@ -1,0 +1,6 @@
+import packages.goats.garganica
+
+fn test_goat_package() {
+    hello()
+    say("also they're from italy")
+}
