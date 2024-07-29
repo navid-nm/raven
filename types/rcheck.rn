@@ -1,0 +1,24 @@
+// Initial type checking logic
+// This should be amended later with a better implementation
+
+import internal.typedefs
+
+const filtered = diagnostics.filter(isPrimitiveTypeError);
+
+if (filtered.length > 0) {
+    filtered.forEach(
+        (diagnostic) => {
+            const message = ts.flattenDiagnosticMessageText(
+                diagnostic.messageText,
+                "\n"
+            )
+            const fmtMsg = fmtErrorMsg(message)
+            const { 
+                line, 
+                character 
+            } = sourceFile.getLineAndCharacterOfPosition(diagnostic.start)
+            say(`Error at ${line + 1}:${character + 1} - ${fmtMsg}`)
+        });
+} else {
+   say("No errors found.")
+}

@@ -1,0 +1,54 @@
+import internal.args
+
+const compilerOptions = 
+{ 
+    allowJs: true, checkJs: true 
+}
+
+const host = ts.createCompilerHost(compilerOptions)
+
+xset(host) 
+{
+    readFile = (filePath) => filePath === fileName ? inputString : undefined
+}
+
+xconst
+{
+    program = ts.createProgram([fileName], compilerOptions, host)
+    sourceFile = program.getSourceFile(fileName)
+    diagnostics = [...program.getSyntacticDiagnostics(sourceFile),...program.getSemanticDiagnostics(sourceFile),]
+}  
+
+const isPrimitiveTypeError = (diagnostic) => 
+{
+    const primitiveTypeErrors = new Set([2322, 2326, 2362, 2363]); 
+    return primitiveTypeErrors.has(diagnostic.code);
+}
+
+const typeMap = 
+{
+    number: "Number",
+    string: "String",
+    boolean: "Boolean",
+    object: "Object",
+    undefined: "Undefined",
+    null: "Null",
+};
+
+const formatTypeName = (typeName) => 
+{
+    nullableMatch = typeName.match(/^(.+)\|undefined$/);
+    if (nullableMatch) {
+        const baseType = nullableMatch[1].trim();
+        return `Nullable${typeMap[baseType] || baseType}`;
+    }
+    return typeMap[typeName] || typeName;
+};
+
+const fmtErrorMsg = (message) => 
+{
+    return message.replace(
+        typePattern,
+        (match, p1) => `'${formatTypeName(p1)}'`
+    );
+};
