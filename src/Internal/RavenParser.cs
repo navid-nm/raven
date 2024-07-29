@@ -216,6 +216,16 @@ namespace Raven.Internal
                 );
             }
 
+            code = UseWithoutParenthesesRegex()
+                .Replace(
+                    code,
+                    match =>
+                    {
+                        var moduleName = match.Groups[1].Value;
+                        return $"const {moduleName} = require(\"{moduleName}\")\n";
+                    }
+                );
+
             // Fix for # placement in static async and similar issues
             code = StaticRegex().Replace(code, "static $1#$2");
             code = StaticAsyncRegex().Replace(code, "async $1#$2");
@@ -341,6 +351,9 @@ namespace Raven.Internal
 
         [GeneratedRegex(@"import\s+(\w+)\s*;?")]
         private static partial Regex ImportPatternRegex();
+
+        [GeneratedRegex(@"use\s+(\w+)\s*")]
+        private static partial Regex UseWithoutParenthesesRegex();
 
         [GeneratedRegex(@"rhtml\(""(.*?)""\)")]
         private static partial Regex TemplatePatternRegex();
