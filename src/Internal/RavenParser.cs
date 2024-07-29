@@ -1,23 +1,14 @@
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Esprima;
 
 namespace Raven.Internal
 {
-    public partial class RavenParser
+    public partial class RavenParser(string sourceCode, string basePath)
     {
-        private readonly string _sourceCode;
-        private readonly string _basePath;
-        private readonly Dictionary<string, string> _typeHints = new();
-        private readonly Dictionary<string, string> _abbreviations = new();
-
-        public RavenParser(string sourceCode, string basePath)
-        {
-            _sourceCode = sourceCode;
-            _basePath = basePath;
-        }
+        private readonly string _sourceCode = sourceCode;
+        private readonly string _basePath = basePath;
+        private readonly Dictionary<string, string> _typeHints = [];
+        private readonly Dictionary<string, string> _abbreviations = [];
 
         public string Transpile()
         {
