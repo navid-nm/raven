@@ -1,4 +1,4 @@
-import user
+import packages.user
 
 onready(fn() {
     const User = { 
