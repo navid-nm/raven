@@ -16,8 +16,8 @@ xset(host)
 
 xconst
 {
-    program = ts.createProgram([fileName], compilerOptions, host)
-    sourceFile = program.getSourceFile(fileName)
+    program     = ts.createProgram([fileName], compilerOptions, host)
+    sourceFile  = program.getSourceFile(fileName)
     diagnostics = [...program.getSyntacticDiagnostics(sourceFile),...program.getSemanticDiagnostics(sourceFile),]
 }  
 
@@ -36,12 +36,12 @@ const isPrimitiveTypeError = (diagnostic) =>
 
 const typeMap = 
 {
-    number: "Number",
-    string: "String",
-    boolean: "Boolean",
-    object: "Object",
-    undefined: "Undefined",
-    null: "Null",
+    number:     "Number",
+    string:     "String",
+    boolean:    "Boolean",
+    object:     "Object",
+    undefined:  "Undefined",
+    null:       "Null",
 };
 
 const formatTypeName = (typeName) => 
