@@ -3,17 +3,17 @@
 
 import internal.typedefs
 
-const filtered = diagnostics.filter(isPrimitiveTypeError);
+val filtered = diagnostics.filter(isPrimitiveTypeError);
 
 if (filtered.length > 0) {
     filtered.forEach(
         (diagnostic) => {
-            const message = ts.flattenDiagnosticMessageText(
+            val message = ts.flattenDiagnosticMessageText(
                 diagnostic.messageText,
                 "\n"
             )
-            const fmtMsg = fmtErrorMsg(message)
-            const { 
+            val fmtMsg = fmtErrorMsg(message)
+            val { 
                 line, 
                 character 
             } = sourceFile.getLineAndCharacterOfPosition(diagnostic.start)

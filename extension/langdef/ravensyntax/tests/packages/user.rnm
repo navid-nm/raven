@@ -1,2 +1,2 @@
-const ProfileClass = "profile-card";
-const ProfileTemplate = rhtml("templates/prof.rhtml");
+val ProfileClass = "profile-card";
+val ProfileTemplate = rhtml("templates/prof.rhtml");

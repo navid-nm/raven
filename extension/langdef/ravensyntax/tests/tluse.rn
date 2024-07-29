@@ -4,6 +4,6 @@ use express
 app = express()
 
 
-const asdf = use("child_process")
+val asdf = use("child_process")
 
 asdf.do_stuff()

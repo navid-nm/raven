@@ -23,7 +23,7 @@ tmp LaunchManager {
       || retry          -> Boolean
       || err            -> Error
       || attempt        -> Void
-      const attempt = (retry) => {
+      val attempt = (retry) => {
          ChildProcess.exec(cmdToRun, (err) => {
             if (err) {
                say(`Error: ${err.message}`);

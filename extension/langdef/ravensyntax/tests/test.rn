@@ -1,14 +1,14 @@
 import packages.user
 
 onready(fn() {
-    const User = { 
+    val User = { 
         name: "Jane Doe", 
         avatar: "avatar.jpg", 
         bio: "Person" 
     }
     let ProfileContainer = doc.get("profile-container")
     if (ProfileContainer) {
-        const ProfileCard = doc.make("div")
+        val ProfileCard = doc.make("div")
         ProfileCard.ClassName = ProfileClass
         ProfileCard.InnerHTML = ProfileTemplate(User)
         ProfileContainer.put(ProfileCard)

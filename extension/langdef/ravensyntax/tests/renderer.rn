@@ -3,7 +3,7 @@ raw(const { ipcRenderer } = require("electron/renderer"))
 
 || escapeBackslashes  -> String
 || path               -> String
-const escapeBackslashes = fn(path) {
+val escapeBackslashes = fn(path) {
     return path.replace(/\\/g, "\\\\")
 }
 
