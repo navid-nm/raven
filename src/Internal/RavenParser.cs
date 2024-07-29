@@ -13,6 +13,7 @@ namespace Raven.Internal
         public string Transpile()
         {
             var code = HandleImports(_sourceCode);
+
             code = HandleTemplates(code);
             code = ExtractAndProcessTypeHints(code);
             code = ExtractAndProcessAbbreviations(code);
