@@ -40,7 +40,7 @@ static void ProcessFile(string inputFilePath, bool useDistDirectory)
         }
         catch (Exception ex)
         {
-            Logger.RaiseProblem($"Issue was encountered during transpilation: {ex.Message}");
+            Logger.RaiseProblem($"Issue during transpilation: {ex.Message}");
         }
     }
 }
