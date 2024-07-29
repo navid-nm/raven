@@ -5,6 +5,7 @@
 *.dbmdl
 *.user
 *.suo
+*.js
 *.sln.docstates
 bin
 obj
