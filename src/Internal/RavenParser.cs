@@ -1,19 +1,30 @@
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using Esprima;
 
 namespace Raven.Internal
 {
-    public partial class RavenParser(string sourceCode, string basePath)
+    public partial class RavenParser
     {
-        private readonly string _sourceCode = sourceCode;
-        private readonly string _basePath = basePath;
-        private readonly Dictionary<string, string> _typeHints = [];
+        private readonly string _sourceCode;
+        private readonly string _basePath;
+        private readonly Dictionary<string, string> _typeHints = new();
+        private readonly Dictionary<string, string> _abbreviations = new();
+
+        public RavenParser(string sourceCode, string basePath)
+        {
+            _sourceCode = sourceCode;
+            _basePath = basePath;
+        }
 
         public string Transpile()
         {
             var code = HandleImports(_sourceCode);
             code = HandleTemplates(code);
             code = ExtractAndProcessTypeHints(code);
+            code = ExtractAndProcessAbbreviations(code);
             code = HandleTemplateLiterals(code);
             code = ReplaceContextAware(code);
 
@@ -92,7 +103,6 @@ namespace Raven.Internal
             foreach (Match match in matches)
             {
                 var variable = match.Groups[1].Value;
-
                 if (!_typeHints.ContainsKey(variable))
                 {
                     // Placeholder as type is not used further
@@ -101,6 +111,51 @@ namespace Raven.Internal
 
                 // Remove the type hint from the code
                 code = code.Replace(match.Value, "");
+            }
+
+            return code;
+        }
+
+        private string ExtractAndProcessAbbreviations(string code)
+        {
+            var abbrevPattern = @"abbrev\s*{([^}]*)}";
+            var abbrevRegex = new Regex(abbrevPattern, RegexOptions.Singleline);
+            var abbrevMatch = abbrevRegex.Match(code);
+
+            if (abbrevMatch.Success)
+            {
+                var abbrevContent = abbrevMatch.Groups[1].Value;
+                var abbrevLines = abbrevContent
+                    .Split('\n')
+                    .Where(line => !string.IsNullOrWhiteSpace(line))
+                    .Select(line => line.Trim())
+                    .ToList();
+
+                foreach (var line in abbrevLines)
+                {
+                    var parts = line.Split('=').Select(part => part.Trim()).ToArray();
+                    if (parts.Length == 2)
+                    {
+                        var abbrev = parts[0];
+                        var replacement = parts[1];
+                        if (!_abbreviations.ContainsKey(abbrev))
+                        {
+                            _abbreviations[abbrev] = replacement;
+                        }
+                    }
+                }
+
+                // Remove the abbrev block from the code
+                code = code.Replace(abbrevMatch.Value, "");
+            }
+
+            // Apply abbreviations
+            foreach (var (abbrev, replacement) in _abbreviations)
+            {
+                // Use word boundaries to avoid partial matches
+                var replacementPattern = $@"\b{Regex.Escape(abbrev)}\b";
+                var replacementRegex = new Regex(replacementPattern);
+                code = replacementRegex.Replace(code, replacement);
             }
 
             return code;
