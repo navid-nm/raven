@@ -1,0 +1,34 @@
+use path
+use fs
+use os
+
+abbrev {
+    write = writeFileSync
+}
+
+||filePath          -> String
+||extractAlbumArt   -> Promise
+open async fn extractAlbumArt(filePath) {
+   try {
+      xconst {
+        mm = use("music-metadata")
+        metadata = await mm.parseFile(filePath)
+      }
+      if (
+         metadata.common &&
+         metadata.common.picture &&
+         metadata.common.picture.length > 0
+      ) {
+         xconst  {
+            pictureData = metadata.common.picture[0]
+            tempDir = os.tmpdir()
+            picturePath = path.join(tempDir, "playing.jpg")
+         }
+         fs.write(picturePath, pictureData.data);
+         return picturePath;
+      }
+   } die (err) {
+      warn("Error extracting album art:", err);
+   }
+   return undefined;
+}
