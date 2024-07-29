@@ -149,6 +149,23 @@ namespace Raven.Internal
                 code = code.Replace(abbrevMatch.Value, "");
             }
 
+            // Process inline abbreviations
+            var inlineAbbrevPattern = @"abbrev\s+(\w+)\s*=\s*([\w.]+)";
+            var inlineAbbrevRegex = new Regex(inlineAbbrevPattern);
+            var inlineAbbrevMatches = inlineAbbrevRegex.Matches(code);
+
+            foreach (Match match in inlineAbbrevMatches)
+            {
+                var abbrev = match.Groups[1].Value;
+                var replacement = match.Groups[2].Value;
+                if (!_abbreviations.ContainsKey(abbrev))
+                {
+                    _abbreviations[abbrev] = replacement;
+                }
+                // Remove the inline abbrev statement
+                code = code.Replace(match.Value, "");
+            }
+
             // Apply abbreviations
             foreach (var (abbrev, replacement) in _abbreviations)
             {
