@@ -7,8 +7,8 @@ namespace Raven.Internal
     {
         private readonly string _sourceCode = sourceCode;
         private readonly string _basePath = basePath;
-        private readonly Dictionary<string, string> _typeHints = [];
-        private readonly Dictionary<string, string> _abbreviations = [];
+        private readonly Dictionary<string, string> _typeHints = new();
+        private readonly Dictionary<string, string> _abbreviations = new();
 
         public string Transpile()
         {
@@ -199,9 +199,10 @@ namespace Raven.Internal
                 (@"\.InnerHTML\b", match => ".innerHTML"),
                 (@"&ready", match => "\"DOMContentLoaded\""),
                 (@"\bwait\s*\(", match => "setTimeout("),
+                (@"val\b", match => "const"), // Replaces `val` with `const`
                 (@"xlet\s*{([^}]*)}", ReplaceXlet),
                 (@"xset\((.*?)\)\s*{([^}]*)}", ReplaceXset),
-                (@"xconst\s*{([^}]*)}", ReplaceXconst),
+                (@"xval\s*{([^}]*)}", ReplaceXval),
                 (@"xvar\s*{([^}]*)}", ReplaceXvar),
                 (@"\bclosed\s+stat\b", match => "static #"),
                 (@"\bopen\s+stat\b", match => "static "),
@@ -226,17 +227,18 @@ namespace Raven.Internal
                     code,
                     pattern,
                     new MatchEvaluator(replacement),
-                    RegexOptions.Singleline
+                    RegexOptions.IgnoreCase | RegexOptions.Multiline
                 );
             }
 
+            // Remove use x* statements
             code = UseWithoutParenthesesRegex()
                 .Replace(
                     code,
                     match =>
                     {
                         var moduleName = match.Groups[1].Value;
-                        return $"const {moduleName} = require(\"{moduleName}\")\n";
+                        return $"const {{ {moduleName} }} = require(\"{moduleName}\");";
                     }
                 );
 
@@ -288,7 +290,7 @@ namespace Raven.Internal
             return string.Join("\n", properties);
         }
 
-        private static string ReplaceXconst(Match match)
+        private static string ReplaceXval(Match match)
         {
             var declarations = match
                 .Groups[1]

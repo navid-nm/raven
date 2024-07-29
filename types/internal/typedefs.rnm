@@ -1,29 +1,23 @@
 import internal.args
 import internal.bootstrap
 
-const compilerOptions = 
+val compilerOptions = 
 { 
     allowJs: true, 
     checkJs: true 
 }
 
-const host = ts.createCompilerHost(compilerOptions)
+val host = ts.createCompilerHost(compilerOptions)
 
-xset(host) 
-{
-    readFile = (filePath) => filePath === fileName ? inputString : undefined
-}
+host.readFile = (filePath) => filePath === fileName ? inputString : undefined
 
-xconst
-{
-    program     = ts.createProgram([fileName], compilerOptions, host)
-    sourceFile  = program.getSourceFile(fileName)
-    diagnostics = [...program.getSyntacticDiagnostics(sourceFile),...program.getSemanticDiagnostics(sourceFile),]
-}  
+val program     = ts.createProgram([fileName], compilerOptions, host)
+val sourceFile  = program.getSourceFile(fileName)
+val diagnostics = [...program.getSyntacticDiagnostics(sourceFile),...program.getSemanticDiagnostics(sourceFile),]
 
-const isPrimitiveTypeError = (diagnostic) => 
+val isPrimitiveTypeError = (diagnostic) => 
 {
-    const primitiveTypeErrors = new Set(
+    val primitiveTypeErrors = new Set(
         [
             2322, 
             2326, 
@@ -34,7 +28,7 @@ const isPrimitiveTypeError = (diagnostic) =>
     return primitiveTypeErrors.has(diagnostic.code);
 }
 
-const typeMap = 
+val typeMap = 
 {
     number:     "Number",
     string:     "String",
@@ -44,17 +38,17 @@ const typeMap =
     null:       "Null",
 };
 
-const formatTypeName = (typeName) => 
+val formatTypeName = (typeName) => 
 {
     nullableMatch = typeName.match(/^(.+)\|undefined$/);
     if (nullableMatch) {
-        const baseType = nullableMatch[1].trim();
+        val baseType = nullableMatch[1].trim();
         return `Nullable${typeMap[baseType] || baseType}`;
     }
     return typeMap[typeName] || typeName;
 };
 
-const fmtErrorMsg = (message) => 
+val fmtErrorMsg = (message) => 
 {
     return message.replace(
         typePattern,

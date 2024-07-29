@@ -2,7 +2,7 @@
 
 Transpiler that affords syntactic sugar over JS, aiming to make JS less ugly without adding any complexity.
 
-Reason: JS sucks ass, is verbose and ugly, and is sometimes unavoidable.
+Reason: JS sucks ass, is verbose, and is ugly.
 
 ---
 
@@ -58,14 +58,14 @@ main.rn:
 import user
 
 onready(fn() {
-    const User = {
+    val User = {
         name: "Jane Doe",
         avatar: "avatar.jpg",
         bio: "Person"
     }
     let ProfileContainer = doc.get("profile-container")
     if (ProfileContainer) {
-        const ProfileCard = doc.make("div")
+        val ProfileCard = doc.make("div")
         ProfileCard.ClassName = ProfileClass
         ProfileCard.InnerHTML = ProfileTemplate(User)
         ProfileContainer.put(ProfileCard)
@@ -82,8 +82,8 @@ This way 1 .js is generated (main.js), rather than 2 (main.js and user.js).
 user.rnm:
 
 ```d
-const ProfileClass = "profile-card"
-const ProfileTemplate = rhtml("templates/profile.rhtml")
+val ProfileClass = "profile-card"
+val ProfileTemplate = rhtml("templates/profile.rhtml")
 ```
 
 templates/profile.rhtml:

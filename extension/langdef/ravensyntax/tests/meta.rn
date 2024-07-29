@@ -8,12 +8,12 @@ abbrev write = writeFileSync
 ||extractAlbumArt   -> Promise
 open async fn extractAlbumArt(filePath) {
    try {
-      xconst {
+      xval {
         mm          = use("music-metadata")
         metadata    = await mm.parseFile(filePath)
       }
       if (metadata.common && metadata.common.picture && metadata.common.picture.length > 0) {
-         xconst  {
+         xval  {
             pictureData = metadata.common.picture[0]
             tempDir     = os.tmpdir()
             picturePath = path.join(tempDir, "playing.jpg")

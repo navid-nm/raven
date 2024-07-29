@@ -1,4 +1,4 @@
-xconst {
+xval {
     AppInfo             = use("../../service/models/appinfo")
     LaunchType          = use("../../service/models/launchtype")
     ProcStats           = use("../../service/data/processstats")
