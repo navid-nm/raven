@@ -102,46 +102,6 @@ function replaceOutsideStrings(text, regex, replacement) {
    return result;
 }
 
-// Fix braces style
-function fixBracesStyle(code) {
-   const lines = code.split("\n");
-   let formattedLines = [];
-   let indentLevel = 0;
-   let inBlockComment = false;
-
-   lines.forEach((line) => {
-      const trimmedLine = line.trim();
-
-      // Detect and handle block comments
-      if (trimmedLine.startsWith("/*")) {
-         inBlockComment = true;
-      }
-      if (inBlockComment) {
-         formattedLines.push(line);
-         if (trimmedLine.endsWith("*/")) {
-            inBlockComment = false;
-         }
-         return;
-      }
-
-      if (trimmedLine.endsWith("}") && indentLevel > 0) {
-         indentLevel--;
-      }
-
-      const currentIndent = " ".repeat(indentLevel * 3);
-      if (trimmedLine.endsWith("{")) {
-         formattedLines.push(currentIndent + trimmedLine);
-         indentLevel++;
-      } else if (trimmedLine === "}") {
-         formattedLines.push(currentIndent + "}");
-      } else {
-         formattedLines.push(currentIndent + line.trim());
-      }
-   });
-
-   return formattedLines.join("\n");
-}
-
 // Helper function to handle regex replacements without repeated escaping
 function formatRavenDocument(document) {
    let formattedText = document.getText();
@@ -178,10 +138,6 @@ function formatRavenDocument(document) {
    );
 
    formattedText = alignDefinitions(formattedText);
-
-   // Fix braces style
-   formattedText = fixBracesStyle(formattedText);
-
    const fullRange = new vscode.Range(
       document.positionAt(0),
       document.positionAt(document.getText().length)
