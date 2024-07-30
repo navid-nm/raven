@@ -1,5 +1,5 @@
 const vscode = require("vscode");
-const RavenLinter = require("./ravenLinter");
+const RavenLinter = require("./linter");
 
 // Converts tabs to a fixed number of spaces
 function private_convertTabsToSpaces(code, tabSize = 4) {
