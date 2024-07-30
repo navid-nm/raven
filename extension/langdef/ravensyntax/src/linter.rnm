@@ -21,5 +21,3 @@ class RavenLinter {
       my.diagnostics.dispose();
    }
 }
-
-module.exports = RavenLinter;

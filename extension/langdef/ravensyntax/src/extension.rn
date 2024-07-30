@@ -1,6 +1,6 @@
 use vscode
 
-val RavenLinter = use("./ravenLinter");
+import linter
 
 // Converts tabs to a fixed number of spaces
 fn convertTabsToSpace(code, tabSize = 4) {
