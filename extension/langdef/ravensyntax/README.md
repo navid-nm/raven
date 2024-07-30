@@ -1,6 +1,6 @@
 # Raven
 
-Syntax highlighting for Raven language.
+Syntax highlighter, formatter, and linter for Raven language.
 
 Raven is a simple transpiler that affords syntactic sugar over JS, aiming to make JS less ugly without adding anything else.
 
