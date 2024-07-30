@@ -7,6 +7,9 @@
 *.suo
 *.js
 *.sln.docstates
+
 bin
 obj
+
 *.vsix
+*.jar
