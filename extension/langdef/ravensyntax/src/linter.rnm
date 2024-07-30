@@ -2,19 +2,18 @@ use vscode
 
 class RavenLinter {
    init {
-      my.diagnostics =
-         vscode.languages.createDiagnosticCollection("raven");
+      my.diagnostics = vscode.languages.createDiagnosticCollection("raven");
    }
 
    lintDocument(document) {
-      if (document.languageId !== "raven") {
+      if (doc.languageId !== "raven") {
          return;
       }
 
       let diagnostics = [];
       // val text = document.getText();
       // val lines = text.split("\n");
-      my.diagnostics.set(document.uri, diagnostics);
+      my.diagnostics.set(doc.uri, diagnostics);
    }
 
    dispose() {
