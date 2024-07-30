@@ -3,7 +3,6 @@
 
 import internal.typedefs
 
-
 val filtered = diagnostics.filter(isPrimitiveTypeError);
 
 if (filtered.length > 0) {

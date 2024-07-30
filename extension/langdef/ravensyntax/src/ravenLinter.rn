@@ -1,4 +1,4 @@
-val vscode = use("vscode");
+use vscode
 
 class RavenLinter {
    init() {

@@ -24,19 +24,19 @@ function alignDefinitions(code) {
       .filter(
          (line) =>
             line.trim().startsWith("||") ||
-            line.trim().startsWith("xconst") ||
+            line.trim().startsWith("xval") ||
             line.trim().startsWith("xlet") ||
             line.trim().startsWith("xvar")
       )
       .map((line) =>
          line.trim().startsWith("||") ||
-         line.trim().startsWith("xconst") ||
+         line.trim().startsWith("xval") ||
          line.trim().startsWith("xlet") ||
          line.trim().startsWith("xvar")
             ? line
                  .trim()
                  .slice(line.trim().indexOf(" ") + 1)
-                 .trim() // Remove the leading `||`, `xconst`, `xlet`, or `xvar` and trim whitespace
+                 .trim() // Remove the leading `||`, `xval`, `xlet`, or `xvar` and trim whitespace
             : line
       );
 
@@ -77,6 +77,7 @@ function alignDefinitions(code) {
 
    return private_convertTabsToSpaces(formattedLines);
 }
+
 // Helper function to replace text outside string literals
 function replaceOutsideStrings(text, regex, replacement) {
    const stringRegex = /(["'`]).*?\1/g; // Matches string literals
@@ -129,6 +130,11 @@ function formatRavenDocument(document) {
       );
    });
 
+   // Replace statements like 'const <module> = require("<module>")' with 'use <module>'
+   formattedText = formattedText.replace(
+      /\b(?:val|const)\s+(\w+)\s*=\s*use\(["']\1["']\);?/g,
+      "use $1"
+   );
    formattedText = alignDefinitions(formattedText);
    const fullRange = new vscode.Range(
       document.positionAt(0),
