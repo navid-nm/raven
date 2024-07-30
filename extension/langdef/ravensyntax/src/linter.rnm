@@ -5,15 +5,15 @@ class RavenLinter {
       my.diagnostics = vscode.languages.createDiagnosticCollection("raven");
    }
 
-   lintDocument(document) {
-      if (doc.languageId !== "raven") {
+   lintDocument(sfile) {
+      if (sfile.languageId !== "raven") {
          return;
       }
 
       let diagnostics = [];
-      // val text = document.getText();
+      // val text = sfile.getText();
       // val lines = text.split("\n");
-      my.diagnostics.set(doc.uri, diagnostics);
+      my.diagnostics.set(sfile.uri, diagnostics);
    }
 
    dispose() {
