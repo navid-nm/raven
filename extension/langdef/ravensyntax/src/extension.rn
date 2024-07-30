@@ -6,7 +6,7 @@ fn private_convertTabsToSpaces(code, tabSize = 4) {
    val lines = code.split("\n");
    return lines
       .map((line) =>
-         line.replace(/^\\t+/g, (match) =>
+         line.replace(/^\\\\\\\\t+/g, (match) =>
             " ".repeat(match.length * tabSize)
          )
       )
@@ -17,7 +17,7 @@ fn private_convertTabsToSpaces(code, tabSize = 4) {
 fn alignDefinitions(code) {
    val lines = code
       .split("\n")
-      .map((line) => line.replace(/\\n/g, "\\n")); // Escape newlines
+      .map((line) => line.replace(/\\\\\\\\n/g, "\\n")); // Escape newlines
 
    // Extract and process lines for type definitions and other keywords
    val typeDefLines = lines
@@ -80,7 +80,8 @@ fn alignDefinitions(code) {
 
 // Helper fn to replace text outside string literals
 fn replaceOutsideStrings(text, regex, replacement) {
-   val stringRegex = "\([\"'`]).*?\1/g"; // Matches string literals
+   // Matches string literals
+   val stringRegex = "\([\"'`]).*?\1/g";
    let result = "";
    let lastIndex = 0;
 
@@ -108,18 +109,18 @@ fn formatRavenDocument(document) {
 
    // Define the replacements
    val replacements = [
-      { regex: /\\bconsole\\.log\\b/g, replacement: "say" },
-      { regex: /\\.str\\b/g, replacement: ".str" },
-      { regex: /\\bconsole\\.error\\b/g, replacement: "warn" },
-      { regex: /\\bthis\\./g, replacement: "my." },
-      { regex: /\\bconstructor\\b/g, replacement: "init" },
-      { regex: /\\brequire\\b/g, replacement: "use" },
-      { regex: /\\bfunction\\b/g, replacement: "fn" },
-      { regex: /\\bprivate\\b/g, replacement: "closed" },
-      { regex: /\\bpublic\\b/g, replacement: "open" },
-      { regex: /\\bstatic\\b/g, replacement: "stat" },
-      { regex: /\\bcatch\\b/g, replacement: "die" },
-      { regex: /\\bconst\\b/g, replacement: "val" },
+      { regex: /\\\\\\\\bconsole\\\\\\\\.log\\\\\\\\b/g, replacement: "say" },
+      { regex: /\\\\\\\\.str\\\\\\\\b/g, replacement: ".str" },
+      { regex: /\\\\\\\\bconsole\\\\\\\\.error\\\\\\\\b/g, replacement: "warn" },
+      { regex: /\\\\\\\\bthis\\\\\\\\./g, replacement: "my." },
+      { regex: /\\\\\\\\bconstructor\\\\\\\\b/g, replacement: "init" },
+      { regex: /\\\\\\\\brequire\\\\\\\\b/g, replacement: "use" },
+      { regex: /\\\\\\\\bfunction\\\\\\\\b/g, replacement: "fn" },
+      { regex: /\\\\\\\\bprivate\\\\\\\\b/g, replacement: "closed" },
+      { regex: /\\\\\\\\bpublic\\\\\\\\b/g, replacement: "open" },
+      { regex: /\\\\\\\\bstatic\\\\\\\\b/g, replacement: "stat" },
+      { regex: /\\\\\\\\bcatch\\\\\\\\b/g, replacement: "die" },
+      { regex: /\\\\\\\\bconst\\\\\\\\b/g, replacement: "val" },
    ];
 
    // Apply the replacements outside string literals
