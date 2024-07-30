@@ -1,7 +1,7 @@
 use vscode
 
 class RavenLinter {
-   init() {
+   init {
       my.diagnostics =
          vscode.languages.createDiagnosticCollection("raven");
    }
