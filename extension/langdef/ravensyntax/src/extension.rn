@@ -1,8 +1,9 @@
 use vscode
+
 val RavenLinter = use("./ravenLinter");
 
 // Converts tabs to a fixed number of spaces
-fn private_convertTabsToSpaces(code, tabSize = 4) {
+closed fn convertTabsToSpaces(code, tabSize = 4) {
    val lines = code.split("\n");
    return lines
       .map((line) =>
