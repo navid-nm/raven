@@ -102,6 +102,29 @@ function replaceOutsideStrings(text, regex, replacement) {
    return result;
 }
 
+// Fix braces style
+function fixBracesStyle(code) {
+   const lines = code.split("\n");
+   let formattedLines = [];
+   let braceIndentation = "";
+
+   lines.forEach((line) => {
+      const trimmedLine = line.trim();
+
+      if (trimmedLine.endsWith("{")) {
+         formattedLines.push(line);
+         braceIndentation = line.match(/^\s*/)[0] + "   "; // Preserve and add to the current indentation
+      } else if (trimmedLine === "}") {
+         braceIndentation = braceIndentation.slice(0, -3); // Reduce indentation by one level
+         formattedLines.push(braceIndentation + "}");
+      } else {
+         formattedLines.push(line);
+      }
+   });
+
+   return formattedLines.join("\n");
+}
+
 // Helper function to handle regex replacements without repeated escaping
 function formatRavenDocument(document) {
    let formattedText = document.getText();
@@ -138,6 +161,10 @@ function formatRavenDocument(document) {
    );
 
    formattedText = alignDefinitions(formattedText);
+
+   // Fix braces style
+   formattedText = fixBracesStyle(formattedText);
+
    const fullRange = new vscode.Range(
       document.positionAt(0),
       document.positionAt(document.getText().length)
