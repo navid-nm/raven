@@ -3,11 +3,11 @@ use vscode
 val RavenLinter = use("./ravenLinter");
 
 // Converts tabs to a fixed number of spaces
-closed fn convertTabsToSpaces(code, tabSize = 4) {
+fn convertTabsToSpace(code, tabSize = 4) {
    val lines = code.split("\n");
    return lines
       .map((line) =>
-         line.replace(/^\\\\\\\\t+/g, (match) =>
+         line.replace(/^\t+/g, (match) =>
             " ".repeat(match.length * tabSize)
          )
       )
@@ -18,7 +18,7 @@ closed fn convertTabsToSpaces(code, tabSize = 4) {
 fn alignDefinitions(code) {
    val lines = code
       .split("\n")
-      .map((line) => line.replace(/\\\\\\\\n/g, "\\n")); // Escape newlines
+      .map((line) => line.replace(/\n/g, "\\n")); // Escape newlines
 
    // Extract and process lines for type definitions and other keywords
    val typeDefLines = lines
@@ -76,30 +76,29 @@ fn alignDefinitions(code) {
       })
       .join("\n");
 
-   return private_convertTabsToSpaces(formattedLines);
+   return convertTabsToSpaces(formattedLines);
 }
 
-// Helper function to replace text outside string literals
-fn replaceOutsideStrings(text, regex, replacement) {
-   // Matches string literals
-   val stringRegex = "\([\"'`]).*?\1/g";
+// Helper function to replace text outside string literals and comments
+fn replaceOutsideStringsAndComments(text, regex, replacement) {
+   val stringAndCommentRegex = /(["'`].*?["'`]|\/\/.*?$)/gm;
    let result = "";
    let lastIndex = 0;
 
-   // Find all string literals
-   text.replace(stringRegex, (match, p1, offset) => {
-      // Replace text outside the string literals
+   // Find all string literals and comments
+   text.replace(stringAndCommentRegex, (match, p1, offset) => {
+      // Replace text outside the string literals and comments
       result += text
          .substring(lastIndex, offset)
          .replace(regex, replacement);
-      // Append the string literal without changes
+      // Append the string literal or comment without changes
       result += match;
       // Update the last processed index
       lastIndex = offset + match.length;
       return match;
    });
 
-   // Replace text after the last string literal
+   // Replace text after the last string literal or comment
    result += text.substring(lastIndex).replace(regex, replacement);
    return result;
 }
@@ -110,23 +109,23 @@ fn formatRavenDocument(document) {
 
    // Define the replacements
    val replacements = [
-      { regex: /\\\\\\\\bconsole\\\\\\\\.log\\\\\\\\b/g, replacement: "say" },
-      { regex: /\\\\\\\\.str\\\\\\\\b/g, replacement: ".str" },
-      { regex: /\\\\\\\\bconsole\\\\\\\\.error\\\\\\\\b/g, replacement: "warn" },
-      { regex: /\\\\\\\\bthis\\\\\\\\./g, replacement: "my." },
-      { regex: /\\\\\\\\bconstructor\\\\\\\\b/g, replacement: "init" },
-      { regex: /\\\\\\\\brequire\\\\\\\\b/g, replacement: "use" },
-      { regex: /\\\\\\\\bfunction\\\\\\\\b/g, replacement: "fn" },
-      { regex: /\\\\\\\\bprivate\\\\\\\\b/g, replacement: "closed" },
-      { regex: /\\\\\\\\bpublic\\\\\\\\b/g, replacement: "open" },
-      { regex: /\\\\\\\\bstatic\\\\\\\\b/g, replacement: "stat" },
-      { regex: /\\\\\\\\bcatch\\\\\\\\b/g, replacement: "die" },
-      { regex: /\\\\\\\\bconst\\\\\\\\b/g, replacement: "val" },
+      { regex: /\bconsole\.log\b/g, replacement: "say" },
+      { regex: /\.str\b/g, replacement: ".str" },
+      { regex: /\bconsole\.error\b/g, replacement: "warn" },
+      { regex: /\bthis\./g, replacement: "my." },
+      { regex: /\bconstructor\b/g, replacement: "init" },
+      { regex: /\brequire\b/g, replacement: "use" },
+      { regex: /\bfunction\b/g, replacement: "fn" },
+      { regex: /\bprivate\b/g, replacement: "closed" },
+      { regex: /\bpublic\b/g, replacement: "open" },
+      { regex: /\bstatic\b/g, replacement: "stat" },
+      { regex: /\bcatch\b/g, replacement: "die" },
+      { regex: /\bconst\b/g, replacement: "val" },
    ];
 
-   // Apply the replacements outside string literals
+   // Apply the replacements outside string literals and comments
    replacements.forEach(({ regex, replacement }) => {
-      formattedText = replaceOutsideStrings(
+      formattedText = replaceOutsideStringsAndComments(
          formattedText,
          regex,
          replacement
