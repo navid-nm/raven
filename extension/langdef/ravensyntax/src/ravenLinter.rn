@@ -12,51 +12,8 @@ class RavenLinter {
       }
 
       let diagnostics = [];
-      val text = document.getText();
-      val lines = text.split("\n");
-
-      lines.forEach((line, i) => {
-         if (line.includes("console.log")) {
-            val index = line.indexOf("console.log");
-            diagnostics.push(
-               new vscode.Diagnostic(
-                  new vscode.Range(
-                     new vscode.Position(i, index),
-                     new vscode.Position(i, index + 3)
-                  ),
-                  "Use say instead of console.log ",
-                  vscode.DiagnosticSeverity.Warning
-               )
-            );
-         }
-         if (line.includes("catch")) {
-            val index = line.indexOf("catch");
-            diagnostics.push(
-               new vscode.Diagnostic(
-                  new vscode.Range(
-                     new vscode.Position(i, index),
-                     new vscode.Position(i, index + 3)
-                  ),
-                  "Use die instead of catch",
-                  vscode.DiagnosticSeverity.Warning
-               )
-            );
-         }
-         if (line.includes("const")) {
-            val index = line.indexOf("const");
-            diagnostics.push(
-               new vscode.Diagnostic(
-                  new vscode.Range(
-                     new vscode.Position(i, index),
-                     new vscode.Position(i, index + 3)
-                  ),
-                  "Use val instead of const",
-                  vscode.DiagnosticSeverity.Warning
-               )
-            );
-         }
-      });
-
+      // val text = document.getText();
+      // val lines = text.split("\n");
       my.diagnostics.set(document.uri, diagnostics);
    }
 
