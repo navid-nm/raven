@@ -5,7 +5,8 @@
    "icon": "img/icon.png",
    "publisher": "NavidM",
    "repository": "https://github.com/navid-nm/raven",
-   "version": "5.0.0",
+   "version": "10.0.0",
+   "main": "./src/extension.js",
    "engines": {
       "vscode": "^1.91.0"
    },
@@ -33,6 +34,18 @@
             "scopeName": "source.raven",
             "path": "./syntaxes/raven.tmLanguage.json"
          }
-      ]
+      ],
+      "keybindings": [
+         {
+            "command": "raven.formatDocument",
+            "key": "ctrl+shift+f",
+            "when": "editorLangId == raven"
+         }
+      ],
+      "configurationDefaults": {
+         "[raven]": {
+            "editor.formatOnSave": true
+         }
+      }
    }
 }
