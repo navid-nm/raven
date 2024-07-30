@@ -3,7 +3,7 @@ using Esprima;
 
 namespace Raven.Internal
 {
-    public partial class RavenParser(string sourceCode, string basePath)
+    public partial class RavenParser(string sourceCode, string basePath) : IParser
     {
         private readonly string _sourceCode = sourceCode;
         private readonly string _basePath = basePath;

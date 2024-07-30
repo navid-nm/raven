@@ -10,6 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="Esprima" Version="3.0.5" />
+    <PackageReference Include="Mono.Options" Version="6.12.0.148" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>
 
 </Project>
