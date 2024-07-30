@@ -106,19 +106,36 @@ function replaceOutsideStrings(text, regex, replacement) {
 function fixBracesStyle(code) {
    const lines = code.split("\n");
    let formattedLines = [];
-   let braceIndentation = "";
+   let indentLevel = 0;
+   let inBlockComment = false;
 
    lines.forEach((line) => {
       const trimmedLine = line.trim();
 
+      // Detect and handle block comments
+      if (trimmedLine.startsWith("/*")) {
+         inBlockComment = true;
+      }
+      if (inBlockComment) {
+         formattedLines.push(line);
+         if (trimmedLine.endsWith("*/")) {
+            inBlockComment = false;
+         }
+         return;
+      }
+
+      if (trimmedLine.endsWith("}") && indentLevel > 0) {
+         indentLevel--;
+      }
+
+      const currentIndent = " ".repeat(indentLevel * 3);
       if (trimmedLine.endsWith("{")) {
-         formattedLines.push(line);
-         braceIndentation = line.match(/^\s*/)[0] + "   "; // Preserve and add to the current indentation
+         formattedLines.push(currentIndent + trimmedLine);
+         indentLevel++;
       } else if (trimmedLine === "}") {
-         braceIndentation = braceIndentation.slice(0, -3); // Reduce indentation by one level
-         formattedLines.push(braceIndentation + "}");
+         formattedLines.push(currentIndent + "}");
       } else {
-         formattedLines.push(line);
+         formattedLines.push(currentIndent + line.trim());
       }
    });
 
