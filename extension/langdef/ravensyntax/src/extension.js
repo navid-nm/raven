@@ -51,7 +51,7 @@ function alignDefinitions(code) {
       .map((line) => {
          if (
             line.trim().startsWith("||") ||
-            line.trim().startsWith("xconst") ||
+            line.trim().startsWith("xval") ||
             line.trim().startsWith("xlet") ||
             line.trim().startsWith("xvar")
          ) {
@@ -77,6 +77,29 @@ function alignDefinitions(code) {
 
    return private_convertTabsToSpaces(formattedLines);
 }
+// Helper function to replace text outside string literals
+function replaceOutsideStrings(text, regex, replacement) {
+   const stringRegex = /(["'`]).*?\1/g; // Matches string literals
+   let result = "";
+   let lastIndex = 0;
+
+   // Find all string literals
+   text.replace(stringRegex, (match, p1, offset) => {
+      // Replace text outside the string literals
+      result += text
+         .substring(lastIndex, offset)
+         .replace(regex, replacement);
+      // Append the string literal without changes
+      result += match;
+      // Update the last processed index
+      lastIndex = offset + match.length;
+      return match;
+   });
+
+   // Replace text after the last string literal
+   result += text.substring(lastIndex).replace(regex, replacement);
+   return result;
+}
 
 function formatRavenDocument(document) {
    let formattedText = document.getText();
@@ -97,7 +120,7 @@ function formatRavenDocument(document) {
       { regex: /\bconst\b/g, replacement: "val" },
    ];
 
-   // Apply the replacements
+   // Apply the replacements outside string literals
    replacements.forEach(({ regex, replacement }) => {
       formattedText = replaceOutsideStrings(
          formattedText,
