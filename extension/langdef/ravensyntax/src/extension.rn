@@ -1,12 +1,12 @@
-const vscode = require("vscode");
-const RavenLinter = require("./ravenLinter");
+use vscode
+val RavenLinter = use("./ravenLinter");
 
 // Converts tabs to a fixed number of spaces
-function private_convertTabsToSpaces(code, tabSize = 4) {
-   const lines = code.split("\n");
+fn private_convertTabsToSpaces(code, tabSize = 4) {
+   val lines = code.split("\n");
    return lines
       .map((line) =>
-         line.replace(/^\t+/g, (match) =>
+         line.replace(/^\\t+/g, (match) =>
             " ".repeat(match.length * tabSize)
          )
       )
@@ -14,13 +14,13 @@ function private_convertTabsToSpaces(code, tabSize = 4) {
 }
 
 // Aligns type definitions and normalizes tabs to 4 spaces
-function alignDefinitions(code) {
-   const lines = code
+fn alignDefinitions(code) {
+   val lines = code
       .split("\n")
-      .map((line) => line.replace(/\n/g, "\\n")); // Escape newlines
+      .map((line) => line.replace(/\\n/g, "\\n")); // Escape newlines
 
    // Extract and process lines for type definitions and other keywords
-   const typeDefLines = lines
+   val typeDefLines = lines
       .filter(
          (line) =>
             line.trim().startsWith("||") ||
@@ -41,13 +41,13 @@ function alignDefinitions(code) {
       );
 
    // Find the maximum length of type definitions
-   const maxLength = Math.max(
+   val maxLength = Math.max(
       ...typeDefLines.map((line) =>
          line.indexOf("->") !== -1 ? line.indexOf("->") : 0
       )
    );
 
-   const formattedLines = lines
+   val formattedLines = lines
       .map((line) => {
          if (
             line.trim().startsWith("||") ||
@@ -55,13 +55,13 @@ function alignDefinitions(code) {
             line.trim().startsWith("xlet") ||
             line.trim().startsWith("xvar")
          ) {
-            const trimmedLine = line.trim().startsWith("||")
+            val trimmedLine = line.trim().startsWith("||")
                ? line.trim().slice(2).trim()
                : line
                     .trim()
                     .slice(line.trim().indexOf(" ") + 1)
                     .trim(); // Remove leading keyword
-            const index = trimmedLine.indexOf("->");
+            val index = trimmedLine.indexOf("->");
             if (index !== -1) {
                return (
                   line.slice(0, line.indexOf(trimmedLine.trim())) + // Preserve original prefix
@@ -78,9 +78,9 @@ function alignDefinitions(code) {
    return private_convertTabsToSpaces(formattedLines);
 }
 
-// Helper function to replace text outside string literals
-function replaceOutsideStrings(text, regex, replacement) {
-   const stringRegex = /(["'`]).*?\1/g; // Matches string literals
+// Helper fn to replace text outside string literals
+fn replaceOutsideStrings(text, regex, replacement) {
+   val stringRegex = "\([\"'`]).*?\1/g"; // Matches string literals
    let result = "";
    let lastIndex = 0;
 
@@ -102,24 +102,24 @@ function replaceOutsideStrings(text, regex, replacement) {
    return result;
 }
 
-// Helper function to handle regex replacements without repeated escaping
-function formatRavenDocument(document) {
+// Helper fn to handle regex replacements without repeated escaping
+fn formatRavenDocument(document) {
    let formattedText = document.getText();
 
    // Define the replacements
-   const replacements = [
-      { regex: /\bconsole\.log\b/g, replacement: "say" },
-      { regex: /\.toString\b/g, replacement: ".str" },
-      { regex: /\bconsole\.error\b/g, replacement: "warn" },
-      { regex: /\bthis\./g, replacement: "my." },
-      { regex: /\bconstructor\b/g, replacement: "init" },
-      { regex: /\brequire\b/g, replacement: "use" },
-      { regex: /\bfunction\b/g, replacement: "fn" },
-      { regex: /\bprivate\b/g, replacement: "closed" },
-      { regex: /\bpublic\b/g, replacement: "open" },
-      { regex: /\bstatic\b/g, replacement: "stat" },
-      { regex: /\bcatch\b/g, replacement: "die" },
-      { regex: /\bconst\b/g, replacement: "val" },
+   val replacements = [
+      { regex: /\\bconsole\\.log\\b/g, replacement: "say" },
+      { regex: /\\.str\\b/g, replacement: ".str" },
+      { regex: /\\bconsole\\.error\\b/g, replacement: "warn" },
+      { regex: /\\bthis\\./g, replacement: "my." },
+      { regex: /\\bconstructor\\b/g, replacement: "init" },
+      { regex: /\\brequire\\b/g, replacement: "use" },
+      { regex: /\\bfunction\\b/g, replacement: "fn" },
+      { regex: /\\bprivate\\b/g, replacement: "closed" },
+      { regex: /\\bpublic\\b/g, replacement: "open" },
+      { regex: /\\bstatic\\b/g, replacement: "stat" },
+      { regex: /\\bcatch\\b/g, replacement: "die" },
+      { regex: /\\bconst\\b/g, replacement: "val" },
    ];
 
    // Apply the replacements outside string literals
@@ -133,12 +133,12 @@ function formatRavenDocument(document) {
 
    // Replace statements like 'val <module> = use("<module>")' with 'use <module>'
    formattedText = formattedText.replace(
-      /\b(?:val|const)\s+(\w+)\s*=\s*use\(["']\1["']\);?/g,
+      /\b(?:val|val)\s+(\w+)\s*=\s*use\(["']\1["']\);?/g,
       "use $1"
    );
 
    formattedText = alignDefinitions(formattedText);
-   const fullRange = new vscode.Range(
+   val fullRange = new vscode.Range(
       document.positionAt(0),
       document.positionAt(document.getText().length)
    );
@@ -146,8 +146,8 @@ function formatRavenDocument(document) {
    return [vscode.TextEdit.replace(fullRange, formattedText)];
 }
 
-function activate(context) {
-   const linter = new RavenLinter();
+fn activate(context) {
+   val linter = new RavenLinter();
    vscode.workspace.onDidOpenTextDocument(linter.lintDocument, linter);
    vscode.workspace.onDidChangeTextDocument((event) =>
       linter.lintDocument(event.document)
@@ -165,7 +165,7 @@ function activate(context) {
    context.subscriptions.push(linter);
 }
 
-function deactivate() {}
+fn deactivate() {}
 
 module.exports = {
    activate,
