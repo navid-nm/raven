@@ -9,4 +9,6 @@
 *.sln.docstates
 bin
 obj
+.antlr
+*.jar
 *.vsix
