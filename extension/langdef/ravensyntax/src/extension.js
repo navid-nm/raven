@@ -78,26 +78,26 @@ function alignDefinitions(code) {
    return private_convertTabsToSpaces(formattedLines);
 }
 
-// Helper function to replace text outside string literals
-function replaceOutsideStrings(text, regex, replacement) {
-   const stringRegex = /(["'`]).*?\1/g; // Matches string literals
+// Helper function to replace text outside string literals and comments
+function replaceOutsideStringsAndComments(text, regex, replacement) {
+   const stringAndCommentRegex = /(["'`].*?["'`]|\/\/.*?$)/gm;
    let result = "";
    let lastIndex = 0;
 
-   // Find all string literals
-   text.replace(stringRegex, (match, p1, offset) => {
-      // Replace text outside the string literals
+   // Find all string literals and comments
+   text.replace(stringAndCommentRegex, (match, p1, offset) => {
+      // Replace text outside the string literals and comments
       result += text
          .substring(lastIndex, offset)
          .replace(regex, replacement);
-      // Append the string literal without changes
+      // Append the string literal or comment without changes
       result += match;
       // Update the last processed index
       lastIndex = offset + match.length;
       return match;
    });
 
-   // Replace text after the last string literal
+   // Replace text after the last string literal or comment
    result += text.substring(lastIndex).replace(regex, replacement);
    return result;
 }
@@ -122,9 +122,9 @@ function formatRavenDocument(document) {
       { regex: /\bconst\b/g, replacement: "val" },
    ];
 
-   // Apply the replacements outside string literals
+   // Apply the replacements outside string literals and comments
    replacements.forEach(({ regex, replacement }) => {
-      formattedText = replaceOutsideStrings(
+      formattedText = replaceOutsideStringsAndComments(
          formattedText,
          regex,
          replacement

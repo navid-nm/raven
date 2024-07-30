@@ -79,7 +79,7 @@ fn alignDefinitions(code) {
    return private_convertTabsToSpaces(formattedLines);
 }
 
-// Helper fn to replace text outside string literals
+// Helper function to replace text outside string literals
 fn replaceOutsideStrings(text, regex, replacement) {
    // Matches string literals
    val stringRegex = "\([\"'`]).*?\1/g";
@@ -104,7 +104,7 @@ fn replaceOutsideStrings(text, regex, replacement) {
    return result;
 }
 
-// Helper fn to handle regex replacements without repeated escaping
+// Helper function to handle regex replacements without repeated escaping
 fn formatRavenDocument(document) {
    let formattedText = document.getText();
 
