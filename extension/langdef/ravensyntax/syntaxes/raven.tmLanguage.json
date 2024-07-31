@@ -31,6 +31,9 @@
       },
       {
          "include": "#builtin-literals"
+      },
+      {
+         "include": "#self-references"
       }
    ],
    "repository": {
@@ -141,6 +144,14 @@
             {
                "name": "support.type.builtin.raven",
                "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(true|false|undefined|null)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
+            }
+         ]
+      },
+      "self-references": {
+         "patterns": [
+            {
+               "name": "variable.language.self.raven",
+               "match": "\\bmy\\b(?=\\.)"
             }
          ]
       }
