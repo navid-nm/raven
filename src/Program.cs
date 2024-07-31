@@ -33,7 +33,7 @@ static void ProcessFile(string inputFilePath, bool useDistDirectory)
                 $"{Path.GetFileNameWithoutExtension(inputFilePath)}.js"
             );
             File.WriteAllText(outputFilePath, jsCode);
-            if (!Glob.IsSilent)
+            if (Glob.IsLoud)
             {
                 Logger.Log($"Transpiled to -> {outputFilePath}", State.SUCCESS);
             }
@@ -73,9 +73,9 @@ else if (args.Length == 1)
     {
         Glob.IsApi = true;
     }
-    if (args[0] == "-s")
+    if (args[0] == "-l")
     {
-        Glob.IsSilent = true;
+        Glob.IsLoud = true;
     }
     else
     {
