@@ -190,6 +190,7 @@ namespace Raven.Internal
                 (@"\bwin\.", match => "window."),
                 (@"\bonready\s*\(", match => "document.addEventListener(\"DOMContentLoaded\","),
                 (@"\.str\s*\(\)", match => ".toString()"),
+                (@"\.num\s*\(\)", match => ".toNumber()"),
                 (@"\bdocument\.get\s*\(", match => "document.getElementById("),
                 (@"\bwin\.onload\s*\(", match => "window.onload"),
                 (@"\bdocument\.make\s*\(", match => "document.createElement("),

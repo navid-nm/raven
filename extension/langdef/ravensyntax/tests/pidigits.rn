@@ -1,0 +1,65 @@
+val MPZ = use('mpzjs');
+val n = +process.argv[2] || 10000;
+
+let i = 0, ns = 0;
+let k = 0;
+let k2 = 1;
+
+val acc = MPZ(0);
+val den = MPZ(1);
+val num = MPZ(1);
+
+val tem = MPZ();
+val d3 = MPZ();
+val d4 = MPZ();
+
+while (i < n) {
+  k++;
+  k2 += 2;
+
+  MPZ.addMul(acc, num, 2);
+  MPZ.mul(acc, acc, k2);
+  MPZ.mul(den, den, k2);
+  MPZ.mul(num, num, k);
+
+  if (num.gt(acc)) {
+    continue;
+  }
+
+  MPZ.mul(tem, num, 3);
+  MPZ.add(tem, tem, acc);
+  MPZ.div(d3, tem, den);
+
+  MPZ.add(tem, tem, num);
+  MPZ.div(d4, tem, den);
+  
+  if (d3.ne(d4)) {
+    continue;
+  }
+
+  val d = d3.num();
+  ns = ns * 10 + d;
+  i++;
+  
+  let last = i >= n;
+  if (i % 10 == 0 || last) {
+    say(pad(ns, last) + '\t:' + i);    
+    ns = 0;
+  }
+
+  if (last) break;
+
+  MPZ.subMul(acc, den, d);
+  MPZ.mul(acc, acc, 10);
+  MPZ.mul(num, num, 10);
+}
+
+fn pad(i, last) {
+  var res = i.str(), count;
+  count = 10 - res.length;
+  while (count > 0) {
+    last ? res += ' ' : res = '0' + res;
+    count--;
+  }
+  return res;
+}
