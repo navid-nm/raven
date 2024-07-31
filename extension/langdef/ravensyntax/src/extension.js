@@ -15,67 +15,90 @@ function private_convertTabsToSpaces(code, tabSize = 4) {
 
 // Aligns type definitions and normalizes tabs to 4 spaces
 function alignDefinitions(code) {
-   const lines = code
-      .split("\n")
-      .map((line) => line.replace(/\n/g, "\\n")); // Escape newlines
+   const lines = code.split("\n");
 
-   // Extract and process lines for type definitions and other keywords
-   const typeDefLines = lines
-      .filter(
-         (line) =>
-            line.trim().startsWith("||") ||
-            line.trim().startsWith("xval") ||
-            line.trim().startsWith("xlet") ||
-            line.trim().startsWith("xvar")
-      )
-      .map((line) =>
+   // Extract and process lines for type definitions
+   const typeDefLines = lines.filter(
+      (line) =>
          line.trim().startsWith("||") ||
          line.trim().startsWith("xval") ||
          line.trim().startsWith("xlet") ||
          line.trim().startsWith("xvar")
-            ? line
-                 .trim()
-                 .slice(line.trim().indexOf(" ") + 1)
-                 .trim() // Remove the leading `||`, `xval`, `xlet`, or `xvar` and trim whitespace
-            : line
-      );
+   );
 
    // Find the maximum length of type definitions
    const maxLength = Math.max(
-      ...typeDefLines.map((line) =>
-         line.indexOf("->") !== -1 ? line.indexOf("->") : 0
-      )
+      ...typeDefLines.map((line) => {
+         const trimmedLine = line.trim().startsWith("||")
+            ? line.trim().slice(2).trim()
+            : line
+                 .trim()
+                 .slice(line.trim().indexOf(" ") + 1)
+                 .trim();
+         const index = trimmedLine.indexOf("->");
+         return index !== -1
+            ? trimmedLine.slice(0, index).trim().length
+            : 0;
+      })
    );
 
-   const formattedLines = lines
-      .map((line) => {
-         if (
-            line.trim().startsWith("||") ||
-            line.trim().startsWith("xval") ||
-            line.trim().startsWith("xlet") ||
-            line.trim().startsWith("xvar")
-         ) {
-            const trimmedLine = line.trim().startsWith("||")
-               ? line.trim().slice(2).trim()
-               : line
-                    .trim()
-                    .slice(line.trim().indexOf(" ") + 1)
-                    .trim(); // Remove leading keyword
-            const index = trimmedLine.indexOf("->");
-            if (index !== -1) {
-               return (
-                  line.slice(0, line.indexOf(trimmedLine.trim())) + // Preserve original prefix
-                  trimmedLine.slice(0, index).padEnd(maxLength + 2) +
-                  trimmedLine.slice(index)
-               );
-            }
-            return line; // Return line unchanged if no "->" found
-         }
-         return line;
-      })
-      .join("\n");
+   // Check if any line is misaligned
+   let needsAlignment = false;
+   typeDefLines.forEach((line) => {
+      const trimmedLine = line.trim().startsWith("||")
+         ? line.trim().slice(2).trim()
+         : line
+              .trim()
+              .slice(line.trim().indexOf(" ") + 1)
+              .trim();
+      const index = trimmedLine.indexOf("->");
+      if (
+         index !== -1 &&
+         trimmedLine.slice(0, index).trim().length !== maxLength
+      ) {
+         needsAlignment = true;
+      }
+   });
 
-   return private_convertTabsToSpaces(formattedLines);
+   // Apply the alignment if necessary
+   if (needsAlignment) {
+      const formattedLines = lines
+         .map((line) => {
+            if (
+               line.trim().startsWith("||") ||
+               line.trim().startsWith("xval") ||
+               line.trim().startsWith("xlet") ||
+               line.trim().startsWith("xvar")
+            ) {
+               const trimmedLine = line.trim().startsWith("||")
+                  ? line.trim().slice(2).trim()
+                  : line
+                       .trim()
+                       .slice(line.trim().indexOf(" ") + 1)
+                       .trim(); // Remove leading keyword
+               const index = trimmedLine.indexOf("->");
+               if (index !== -1) {
+                  const prefix = line.slice(
+                     0,
+                     line.indexOf(trimmedLine.trim())
+                  );
+                  const beforeArrow = trimmedLine
+                     .slice(0, index)
+                     .trim()
+                     .padEnd(maxLength + 1);
+                  const afterArrow = trimmedLine.slice(index);
+                  return `${prefix}${beforeArrow} ${afterArrow}`;
+               }
+               return line; // Return line unchanged if no "->" found
+            }
+            return line;
+         })
+         .join("\n");
+
+      return private_convertTabsToSpaces(formattedLines);
+   }
+
+   return private_convertTabsToSpaces(code);
 }
 
 // Helper function to replace text outside string literals and comments
