@@ -22,6 +22,15 @@
       },
       {
          "include": "#type-hints"
+      },
+      {
+         "include": "#operators"
+      },
+      {
+         "include": "#primitives"
+      },
+      {
+         "include": "#builtin-literals"
       }
    ],
    "repository": {
@@ -108,6 +117,30 @@
                      "match": "\\w+$"
                   }
                ]
+            }
+         ]
+      },
+      "operators": {
+         "patterns": [
+            {
+               "name": "keyword.operator.raven",
+               "match": "\\b(==|!=|<=|>=|<|>|=|\\+|-|\\*|/|%|&&|\\|\\|)\\b"
+            }
+         ]
+      },
+      "primitives": {
+         "patterns": [
+            {
+               "name": "support.type.primitive.raven",
+               "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(string|number|bigint|boolean|symbol|any|void|never|unknown)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
+            }
+         ]
+      },
+      "builtin-literals": {
+         "patterns": [
+            {
+               "name": "support.type.builtin.raven",
+               "match": "(?<![_$[:alnum:]])(?:(?<=\\.\\.\\.)|(?<!\\.))(true|false|undefined|null)(?![_$[:alnum:]])(?:(?=\\.\\.\\.)|(?!\\.))"
             }
          ]
       }

@@ -1,4 +1,4 @@
-namespace Raven.Internal
+namespace Raven.Data
 {
     public static class Glob
     {

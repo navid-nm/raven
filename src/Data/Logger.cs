@@ -1,4 +1,6 @@
-namespace Raven.Internal
+using Raven.Internal;
+
+namespace Raven.Data
 {
     public static class Logger
     {

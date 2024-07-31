@@ -6,11 +6,11 @@ abbrev {
     run     = app.listen
 }
 
-|| User     -> Model
-|| app      -> Express
-|| req      -> HTTPRequest
-|| res      -> HTTPResult
-|| err      -> Error
+|| User  -> Model
+|| app   -> Express
+|| req   -> HTTPRequest
+|| res   -> HTTPResult
+|| err   -> Error
 
 go("/users", async (req, res) =>
 {

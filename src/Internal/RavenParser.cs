@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using Esprima;
+using Raven.Data;
 
 namespace Raven.Internal
 {
