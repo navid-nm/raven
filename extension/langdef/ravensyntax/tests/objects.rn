@@ -9,7 +9,7 @@ tmp LibraryManager {
    || steamPath   -> NullableString
    || ExecuteApp  -> Promise
    open stat async ExecuteApp(app) {
-      let cmdToRun= "${app.LaunchPath}";
+      let cmdToRun = "${app.LaunchPath}";
       if (app.LaunchType == LaunchType.STEAMURL) {
          let steamPath = SteamPathManager.getSteamPath();
          if (steamPath != null) {
