@@ -44,6 +44,11 @@
                "match": "//.*$"
             },
             {
+               "name": "comment.block.raven",
+               "begin": "/\\*",
+               "end": "\\*/"
+            },
+            {
                "name": "comment.line.typehint.raven",
                "match": "\\|\\|\\s*\\w+\\s*->\\s*\\w+"
             }
