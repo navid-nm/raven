@@ -14,16 +14,13 @@ fn logtest() {
         {name: "Bob", age: 90}
     ])
 
-    let x = 0
-
     say.time("loopTimer")
 
-    while (x < 10) {
-        say.info("Death")
-        x++
+    for (let i = 0; i < 10; i++) {
+        say.info("Death", i)
     }
 
-    say.timeEnd("loopTimer")
+    say.tend("loopTimer")
 }
 
 fn nestedlogtest() {
