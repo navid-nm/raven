@@ -263,6 +263,7 @@ namespace Raven.Internal
 
             // Fix for space between # and variable name
             code = PrivateMemberSpaceRegex().Replace(code, "#$1");
+            code = StrictRegex().Replace(code, "\"use strict\";");
 
             // Fix for private member references
             code = PrivateMemberReferenceRegex()
@@ -400,5 +401,8 @@ namespace Raven.Internal
 
         [GeneratedRegex(@"\b(this\.)\w+\b")]
         private static partial Regex PrivateMemberReferenceRegex();
+
+        [GeneratedRegex(@"\bstrict\b")]
+        private static partial Regex StrictRegex();
     }
 }

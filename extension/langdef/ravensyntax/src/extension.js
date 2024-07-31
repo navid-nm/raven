@@ -179,6 +179,11 @@ function formatRavenDocument(document) {
       "use $1"
    );
 
+   formattedText = formattedText.replace(
+      /['"]use\s+strict['"];\s*/g,
+      "strict\n\n"
+   );
+
    formattedText = alignDefinitions(formattedText);
    const fullRange = new vscode.Range(
       document.positionAt(0),
