@@ -218,7 +218,9 @@ namespace Raven.Internal
                         + (match.Groups[1].Value != string.Empty ? match.Groups[1].Value : "()")
                         + " {"
                 ),
-                (@"\belif\b", match => "else if")
+                (@"\belif\b", match => "else if"),
+                (@"\bend\s*\(\s*(\d+)\s*\)", match => $"process.exit({match.Groups[1].Value});"),
+                (@"\bend\b", match => "process.exit(0);"),
             };
 
             foreach (var (pattern, replacement) in patterns)
