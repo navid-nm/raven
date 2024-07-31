@@ -1,0 +1,15 @@
+if (true == true) {
+    say("Test pass #0")
+}
+
+if (1 == "1") {
+    say("FAIL: this should never happen")
+} else {
+    say("Test pass #1")
+}
+
+if (1 != "1") {
+    say("Test pass #2")
+} else {
+    say("FAIL: this should never happen")
+}
