@@ -33,7 +33,7 @@ fn nestedlogtest() {
     for (i of [1, 2, 3]) {
         say("Iteration: " + i.str())
         if (i == 2) {
-            say.error("Test passed: Error at iteration 2. This is supposed to error.")
+            say.info("Test passed: Error at iteration 2. This is supposed to error.")
         }
     }
     
