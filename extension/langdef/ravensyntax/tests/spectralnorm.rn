@@ -1,0 +1,55 @@
+val bytesPerFloat = Float64Array.BYTES_PER_ELEMENT;
+
+fn mainThread(n) {
+    val sab = new SharedArrayBuffer(3 * bytesPerFloat * n);
+    val u = new Float64Array(sab, 0, n).fill(1);
+    val v = new Float64Array(sab, bytesPerFloat * n, n);
+    val w = new Float64Array(sab, 2 * bytesPerFloat * n, n);
+
+    for (let i = 0; i < 10; i++) {
+        atAu(u, v, w);
+        atAu(v, u, w);
+    }
+
+    let vBv = 0;
+    let vv = 0;
+    for (let i = 0; i < n; i++) {
+        vBv += u[i] * v[i];
+        vv += v[i] * v[i];
+    }
+
+    val result = Math.sqrt(vBv / vv);
+
+    say(result.toFixed(9));
+
+    fn atAu(u, v, w) {
+        au(u, w);
+        atu(w, v);
+    }
+
+    fn au(u, v) {
+        for (let i = 0; i < n; i++) {
+            let t = 0;
+            for (let j = 0; j < n; j++) {
+                t += u[j] / a(i, j);
+            }
+            v[i] = t;
+        }
+    }
+
+    fn atu(u, v) {
+        for (let i = 0; i < n; i++) {
+            let t = 0;
+            for (let j = 0; j < n; j++) {
+                t += u[j] / a(j, i);
+            }
+            v[i] = t;
+        }
+    }
+
+    fn a(i, j) {
+        return ((i + j) * (i + j + 1) >>> 1) + i + 1;
+    }
+}
+
+mainThread(+process.argv[2]);
