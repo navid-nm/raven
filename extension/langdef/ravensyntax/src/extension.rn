@@ -200,4 +200,4 @@ fn deactivate() {}
 module.exports = {
    activate,
    deactivate,
-};
+}
