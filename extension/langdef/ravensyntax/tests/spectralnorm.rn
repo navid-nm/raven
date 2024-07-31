@@ -13,7 +13,7 @@ fn mainThread(n) {
 
     let vBv = 0;
     let vv = 0;
-    
+
     for (let i = 0; i < n; i++) {
         vBv += u[i] * v[i];
         vv += v[i] * v[i];
