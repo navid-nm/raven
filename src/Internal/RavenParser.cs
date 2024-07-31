@@ -221,6 +221,8 @@ namespace Raven.Internal
                 (@"\belif\b", match => "else if"),
                 (@"\bend\s*\(\s*(\d+)\s*\)", match => $"process.exit({match.Groups[1].Value});"),
                 (@"\bend\b", match => "process.exit(0);"),
+                (@"(?<![!=])==(?!=)", match => "==="), // Replace '==' with '===' ensuring no '===' or '!=='
+                (@"(?<![=!])!=(?!=)", match => "!=="), // Replace '!=' with '!==' ensuring no '!=='
             };
 
             foreach (var (pattern, replacement) in patterns)

@@ -146,6 +146,8 @@ function formatRavenDocument(document) {
       { regex: /\bcatch\b/g, replacement: "die" },
       { regex: /\bconst\b/g, replacement: "val" },
       { regex: /\belse\s+if\b/g, replacement: "elif" },
+      { regex: /===/g, replacement: "==" }, // Replace '===' with '=='
+      { regex: /!==/g, replacement: "!=" }, // Replace '!==' with '!='
    ];
 
    // Apply the replacements outside string literals and comments

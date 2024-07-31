@@ -1,5 +1,7 @@
 use vscode
 
+|| diagnostics  -> DiagnosticCollection
+|| sfile        -> File
 class RavenLinter {
    init {
       my.diagnostics = vscode.languages.createDiagnosticCollection("raven");
