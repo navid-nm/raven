@@ -150,6 +150,7 @@ function formatRavenDocument(document) {
       { regex: /\bconsole\.error\b/g, replacement: "warn" },
       { regex: /\bprocess\.exit\b\(\)/g, replacement: "end" },
       { regex: /\bprocess\.exit\b/g, replacement: "end" },
+      { regex: /\bmodule\.exports\s*=\s*/g, replacement: "expose" },
       { regex: /\bthis\./g, replacement: "my." },
       { regex: /\bconstructor\b/g, replacement: "init" },
       { regex: /\brequire\b/g, replacement: "use" },
