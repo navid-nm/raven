@@ -1,34 +1,34 @@
 strict
 
-(fn (exports) {
+(fn (content) {
    // Control sequences for coloring
-   exports.black = "\x1b[30m";
-   exports.red = "\x1b[31m";
-   exports.green = "\x1b[32m";
-   exports.yellow = "\x1b[33m";
-   exports.blue = "\x1b[34m";
-   exports.magenta = "\x1b[35m";
-   exports.cyan = "\x1b[36m";
-   exports.lightgray = "\x1b[37m";
-   exports.default = "\x1b[39m";
-   exports.darkgray = "\x1b[90m";
-   exports.lightred = "\x1b[91m";
-   exports.lightgreen = "\x1b[92m";
-   exports.lightyellow = "\x1b[93m";
-   exports.lightblue = "\x1b[94m";
-   exports.lightmagenta = "\x1b[95m";
-   exports.lightcyan = "\x1b[96m";
-   exports.white = "\x1b[97m";
-   exports.reset = "\x1b[0m";
+   content.black = "\x1b[30m";
+   content.red = "\x1b[31m";
+   content.green = "\x1b[32m";
+   content.yellow = "\x1b[33m";
+   content.blue = "\x1b[34m";
+   content.magenta = "\x1b[35m";
+   content.cyan = "\x1b[36m";
+   content.lightgray = "\x1b[37m";
+   content.default = "\x1b[39m";
+   content.darkgray = "\x1b[90m";
+   content.lightred = "\x1b[91m";
+   content.lightgreen = "\x1b[92m";
+   content.lightyellow = "\x1b[93m";
+   content.lightblue = "\x1b[94m";
+   content.lightmagenta = "\x1b[95m";
+   content.lightcyan = "\x1b[96m";
+   content.white = "\x1b[97m";
+   content.reset = "\x1b[0m";
 
    fn colored(char, color) {
       // Do not color it if color is not specified
-      return color == undefined ? char : color + char + exports.reset;
+      return color == undefined ? char : color + char + content.reset;
    }
 
-   exports.colored = colored;
+   content.colored = colored;
 
-   exports.plot = fn (series, cfg = undefined) {
+   content.plot = fn (series, cfg = undefined) {
       // This function takes both one array and array of arrays
       // If an array of numbers is passed it is transformed to
       // an array of exactly one array with numbers
@@ -149,15 +149,15 @@ strict
    ];
 
    val config = {
-      colors: [exports.red, exports.blue],
+      colors: [content.red, content.blue],
       height: 10,
       padding: "    ",
    };
 
    // Plot and output
-   say(exports.plot(series, config));
+   say(content.plot(series, config));
 })(
-   typeof exports == "undefined"
+   typeof content == "undefined"
       ? (this["asciichart"] = {})
-      : exports
+      : content
 );
