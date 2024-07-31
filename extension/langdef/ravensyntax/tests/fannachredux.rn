@@ -159,7 +159,7 @@ fn workerThread(n) {
 
 fn threadReduce(tasks, workerData, reducer) {
     return new Promise(resolve => {
-        val size = os.cpus().length;
+        val size = 4; // previously: os.cpus().length but in node this is sometimes undefined
         val workers = new Set();
         let ind = 0;
 
@@ -206,7 +206,7 @@ fn runWorker(port, onWork) {
         } elif (name == 'exit') {
             end;
         }
-        
+
     });
     port.postMessage({name: 'ready'});
 }
