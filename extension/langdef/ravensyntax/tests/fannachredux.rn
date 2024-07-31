@@ -204,7 +204,7 @@ fn runWorker(port, onWork) {
                 data: onWork(message.data),
             });
         } elif (name === 'exit') {
-            process.exit();
+            end;
         }
     });
     port.postMessage({name: 'ready'});
