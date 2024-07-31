@@ -9,13 +9,10 @@ fn logtest() {
     say.debug("This is a debug message")
     say.trace("This is a trace message")
     say.amber("This is a warning message")
-
-    val data = [
+    say.table([
         {name: "Alice", age: 30},
         {name: "Bob", age: 90}
-    ]
-
-    say.table(data)
+    ])
 
     let x = 0
 
