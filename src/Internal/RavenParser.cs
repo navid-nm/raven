@@ -199,11 +199,11 @@ namespace Raven.Internal
                 (@"\.InnerHTML\b", match => ".innerHTML"),
                 (@"&ready", match => "\"DOMContentLoaded\""),
                 (@"\bwait\s*\(", match => "setTimeout("),
-                (@"val\b", match => "const"), // Replaces `val` with `const`
                 (@"xlet\s*{([^}]*)}", ReplaceXlet),
                 (@"xset\((.*?)\)\s*{([^}]*)}", ReplaceXset),
                 (@"xval\s*{([^}]*)}", ReplaceXval),
                 (@"xvar\s*{([^}]*)}", ReplaceXvar),
+                (@"val\b", match => "const"), // Replaces `val` with `const`
                 (@"\bclosed\s+stat\b", match => "static #"),
                 (@"\bopen\s+stat\b", match => "static "),
                 (@"\bclosed\s+async\b", match => "async #"),

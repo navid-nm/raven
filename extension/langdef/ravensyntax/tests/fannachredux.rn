@@ -45,9 +45,9 @@ fn fannkuch(n) {
         idx = idxMin;
         for (let sign = true; ; sign = !sign) {
             let first = p[0];
-            if (first !== 0) {
+            if (first != 0) {
                 let flips = 1;
-                if (p[first] !== 0) {
+                if (p[first] != 0) {
                     for (let j = 1; j < n; j++) {
                         pp[j] = p[j];
                     }
@@ -66,7 +66,7 @@ fn fannkuch(n) {
                         val t = pp[p0];
                         pp[p0] = p0;
                         p0 = t;
-                        if (pp[p0] === 0) {
+                        if (pp[p0] == 0) {
                             break;
                         }
                     }
@@ -82,7 +82,7 @@ fn fannkuch(n) {
             }
 
             idx++;
-            if (idx === idxMax) {
+            if (idx == idxMax) {
                 break;
             }
 
@@ -169,10 +169,10 @@ fn threadReduce(tasks, workerData, reducer) {
             worker.on('message', message => {
                 val name = message.name;
 
-                if (name === 'result') {
+                if (name == 'result') {
                     reducer(message.data);
                 }
-                if (name === 'ready' || name === 'result') {
+                if (name == 'ready' || name == 'result') {
                     if (ind < tasks.length) {
                         val data = tasks[ind];
                         ind++;
@@ -184,7 +184,7 @@ fn threadReduce(tasks, workerData, reducer) {
             });
             worker.on('exit', () => {
                 workers.delete(worker);
-                if (workers.size === 0) {
+                if (workers.size == 0) {
                     resolve();
                 }
             });
@@ -198,12 +198,12 @@ fn runWorker(port, onWork) {
     port.on('message', message => {
         val name = message.name;
 
-        if (name === 'work') {
+        if (name == 'work') {
             port.postMessage({
                 name: 'result',
                 data: onWork(message.data),
             });
-        } elif (name === 'exit') {
+        } elif (name == 'exit') {
             end;
         }
     });
