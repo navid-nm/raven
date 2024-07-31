@@ -7,8 +7,8 @@ namespace Raven.Internal
     {
         private readonly string _sourceCode = sourceCode;
         private readonly string _basePath = basePath;
-        private readonly Dictionary<string, string> _typeHints = new();
-        private readonly Dictionary<string, string> _abbreviations = new();
+        private readonly Dictionary<string, string> _typeHints = [];
+        private readonly Dictionary<string, string> _abbreviations = [];
 
         public string Transpile()
         {
