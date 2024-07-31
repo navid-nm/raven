@@ -1,4 +1,3 @@
-
 val { Worker, isMainThread, parentPort, workerData } = use('worker_threads');
 use os
 
@@ -204,7 +203,7 @@ fn runWorker(port, onWork) {
                 name: 'result',
                 data: onWork(message.data),
             });
-        } else if (name === 'exit') {
+        } elif (name === 'exit') {
             process.exit();
         }
     });

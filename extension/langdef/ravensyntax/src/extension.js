@@ -120,6 +120,7 @@ function formatRavenDocument(document) {
       { regex: /\bstatic\b/g, replacement: "stat" },
       { regex: /\bcatch\b/g, replacement: "die" },
       { regex: /\bconst\b/g, replacement: "val" },
+      { regex: /\belse\s+if\b/g, replacement: "elif" },
    ];
 
    // Apply the replacements outside string literals and comments
