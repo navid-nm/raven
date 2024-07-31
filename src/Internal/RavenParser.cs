@@ -196,8 +196,6 @@ namespace Raven.Internal
                 (@"\bdocument\.make\s*\(", match => "document.createElement("),
                 (@"\bdocument\.listen\s*\(", match => "document.addEventListener("),
                 (@"\.put\s*\(", match => ".appendChild("),
-                (@"\.ClassName\b", match => ".className"),
-                (@"\.InnerHTML\b", match => ".innerHTML"),
                 (@"&ready", match => "\"DOMContentLoaded\""),
                 (@"\bwait\s*\(", match => "setTimeout("),
                 (@"xlet\s*{([^}]*)}", ReplaceXlet),

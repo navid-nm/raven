@@ -133,6 +133,7 @@ function formatRavenDocument(document) {
    const replacements = [
       { regex: /\bconsole\.log\b/g, replacement: "say" },
       { regex: /\.toString\b/g, replacement: ".str" },
+      { regex: /\.toNumber\b/g, replacement: ".num" },
       { regex: /\bconsole\.error\b/g, replacement: "warn" },
       { regex: /\bprocess\.exit\b\(\)/g, replacement: "end" },
       { regex: /\bprocess\.exit\b/g, replacement: "end" },

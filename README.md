@@ -66,8 +66,8 @@ onready(fn() {
     let ProfileContainer = doc.get("profile-container")
     if (ProfileContainer) {
         val ProfileCard = doc.make("div")
-        ProfileCard.ClassName = ProfileClass
-        ProfileCard.InnerHTML = ProfileTemplate(User)
+        ProfileCard.className = ProfileClass
+        ProfileCard.innerHTML = ProfileTemplate(User)
         ProfileContainer.put(ProfileCard)
     }
 })
