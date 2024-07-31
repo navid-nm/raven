@@ -1,8 +1,9 @@
 use vscode
-val RavenLinter = use("./linter");
+
+import linter
 
 // Converts tabs to a fixed number of spaces
-fn private_convertTabsToSpaces(code, tabSize = 4) {
+fn convertTabsToSpaces(code, tabSize = 4) {
    val lines = code.split("\n");
    return lines
       .map((line) =>
@@ -95,10 +96,10 @@ fn alignDefinitions(code) {
          })
          .join("\n");
 
-      return private_convertTabsToSpaces(formattedLines);
+      return convertTabsToSpaces(formattedLines);
    }
 
-   return private_convertTabsToSpaces(code);
+   return convertTabsToSpaces(code);
 }
 
 // Helper function to replace text outside string literals and comments
