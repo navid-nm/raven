@@ -8,7 +8,7 @@ class RavenLinter {
    }
 
    lintDocument(sfile) {
-      if (sfile.languageId !== "raven") {
+      if (sfile.languageId != "raven") {
          return;
       }
 

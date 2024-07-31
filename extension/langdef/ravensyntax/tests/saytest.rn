@@ -1,0 +1,56 @@
+|| data  -> JSON
+|| x     -> number
+fn logtest() {
+    say("This is a simple log message")
+
+    warn("This is an error message")
+
+    say.info("This is an info message")
+    say.debug("This is a debug message")
+    say.trace("This is a trace message")
+    say.amber("This is a warning message")
+
+    val data = [
+        {name: "Alice", age: 30},
+        {name: "Bob", age: 90}
+    ]
+
+    say.table(data)
+
+    let x = 0
+
+    say.time("loopTimer")
+
+    while (x < 10) {
+        say.info("Death")
+        x++
+    }
+
+    say.timeEnd("loopTimer")
+}
+
+fn nestedlogtest() {
+    for (i of [1, 2, 3]) {
+        say("Iteration: " + i.str())
+        if (i == 2) {
+            say.error("Test passed: Error at iteration 2. This is supposed to error.")
+        }
+    }
+    
+    val obj = {
+        log: fn() {
+            say("Log from object method")
+        }
+    }
+
+    obj.log()
+
+    try {
+        val x = 10 / 0
+    } die (e) {
+        say.amber("Caught division by zero")
+    }
+}
+
+logtest()
+nestedlogtest()
