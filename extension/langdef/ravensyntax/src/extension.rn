@@ -135,13 +135,25 @@ fn replaceOutsideStringsAndComments(text, regex, replacement) {
 }
 
 // Helper function to handle regex replacements without repeated escaping
-|| document      -> doc
 fn formatRavenDocument(document) {
    let formattedText = document.getText();
 
    // Define the replacements
    val replacements = [
       { regex: /\bconsole\.log\b/g, replacement: "say" },
+      { regex: /\bconsole\.info\b/g, replacement: "say.info" },
+      { regex: /\bconsole\.table\b/g, replacement: "say.table" },
+      { regex: /\bconsole\.debug\b/g, replacement: "say.debug" },
+      { regex: /\bconsole\.trace\b/g, replacement: "say.trace" },
+      { regex: /\bconsole\.time\b/g, replacement: "say.time" },
+      { regex: /\bconsole\.warn\b/g, replacement: "say.amber" },
+      { regex: /\bconsole\.error\b/g, replacement: "say.error" },
+      { regex: /\bconsole\.table\b/g, replacement: "say.table" },
+      { regex: /\bconsole\.timeEnd\b/g, replacement: "say.tend" },
+      { regex: /\bconsole\.clear\b/g, replacement: "say.clear" },
+      { regex: /\bconsole\.timeLog\b/g, replacement: "say.tlog" },
+      { regex: /\bconsole\.timeStamp\b/g, replacement: "say.tstamp" },
+      { regex: /\bconsole\.group\b/g, replacement: "say.group" },
       { regex: /\.str\b/g, replacement: ".str" },
       { regex: /\.num\b/g, replacement: ".num" },
       { regex: /\bconsole\.error\b/g, replacement: "warn" },
@@ -174,6 +186,11 @@ fn formatRavenDocument(document) {
    formattedText = formattedText.replace(
       /\b(?:val|val)\s+(\w+)\s*=\s*use\(["']\1["']\);?/g,
       "use $1"
+   );
+
+   formattedText = formattedText.replace(
+      /['"]use\s+strict['"];\s*/g,
+      "strict\n\n"
    );
 
    formattedText = alignDefinitions(formattedText);
