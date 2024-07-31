@@ -41,7 +41,7 @@
          "patterns": [
             {
                "name": "keyword.control.raven",
-               "match": "\\b(if|while|for|continue|open|map|join|filter|abbrev|closed|stat|return|fn|val|xval|xset|xlet|die|tmp|init|elif|else|raw|new|enum|class|init|async|await|wait|win|doc|let|var|say|warn|import|do|then|panic|end|break|in|use|foreach|onready)\\b"
+               "match": "\\b(if|while|for|continue|open|map|join|filter|abbrev|closed|stat|return|fn|val|xval|xset|xlet|die|tmp|init|elif|else|raw|new|enum|class|init|async|await|wait|win|doc|let|var|say|warn|import|do|then|end|break|in|of|use|foreach|onready)\\b"
             }
          ]
       },
