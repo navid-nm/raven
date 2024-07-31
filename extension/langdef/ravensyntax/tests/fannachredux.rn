@@ -206,6 +206,7 @@ fn runWorker(port, onWork) {
         } elif (name == 'exit') {
             end;
         }
+        
     });
     port.postMessage({name: 'ready'});
 }
