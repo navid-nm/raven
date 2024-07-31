@@ -15,6 +15,10 @@ fn convertTabsToSpaces(code, tabSize = 4) {
 }
 
 // Aligns type definitions and normalizes tabs to 4 spaces
+// You'll see below the result of this alignment :)
+||code          -> string
+||typeDefLines  -> string[]
+||lines         -> string[]
 fn alignDefinitions(code) {
    val lines = code.split("\n");
 
@@ -103,6 +107,10 @@ fn alignDefinitions(code) {
 }
 
 // Helper function to replace text outside string literals and comments
+|| text          -> string
+|| regex         -> string
+|| replacement   -> string
+|| result        -> string
 fn replaceOutsideStringsAndComments(text, regex, replacement) {
    val stringAndCommentRegex = /(["'`].*?["'`]|\/\/.*?$)/gm;
    let result = "";
@@ -127,6 +135,7 @@ fn replaceOutsideStringsAndComments(text, regex, replacement) {
 }
 
 // Helper function to handle regex replacements without repeated escaping
+|| document      -> doc
 fn formatRavenDocument(document) {
    let formattedText = document.getText();
 
