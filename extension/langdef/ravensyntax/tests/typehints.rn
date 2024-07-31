@@ -1,6 +1,6 @@
-|| cn       -> Connection
-|| video    -> Video
-|| err      -> Error
+|| cn     -> Connection
+|| video  -> Video
+|| err    -> Error
 cn.on("ReceiveVideo", fn(video) 
 {
     try {

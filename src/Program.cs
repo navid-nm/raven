@@ -1,4 +1,5 @@
-﻿using Raven.Internal;
+﻿using Mono.Options;
+using Raven.Internal;
 
 static void ProcessFile(string inputFilePath, bool useDistDirectory)
 {
@@ -46,64 +47,83 @@ static void ProcessFile(string inputFilePath, bool useDistDirectory)
 }
 
 bool useDistDirectory = false;
+bool showHelp = false;
+bool showVersion = false;
+bool isApi = false;
+bool isLoud = false;
 
-if (args.Length == 0)
+var options = new OptionSet
 {
-    string currentDirectory = Directory.GetCurrentDirectory();
-    var ravenFiles = Directory.GetFiles(currentDirectory, "*.rn", SearchOption.AllDirectories);
-    if (ravenFiles.Length == 0)
-    {
-        Logger.RaiseProblem(
-            "No source files found in the current directory or its subdirectories."
-        );
-    }
-    foreach (var ravenFile in ravenFiles)
-    {
-        ProcessFile(ravenFile, useDistDirectory);
-    }
-}
-else if (args.Length == 1)
+    { "d|dist", "Use the 'dist' directory for output.", v => useDistDirectory = v != null },
+    { "l|loud", "Print detailed logs.", v => isLoud = v != null },
+    { "a|api", "Enable API mode.", v => isApi = v != null },
+    { "v|version", "Show version information.", v => showVersion = v != null },
+    { "h|help", "Show help message.", v => showHelp = v != null }
+};
+
+try
 {
-    if (args[0] == "--version")
+    options.Parse(Environment.GetCommandLineArgs());
+
+    if (showHelp)
+    {
+        Console.WriteLine("Usage: [options] [<input file path(s)>]");
+        options.WriteOptionDescriptions(Console.Out);
+        return;
+    }
+
+    if (showVersion)
     {
         Console.WriteLine("1.1.0");
         return;
     }
-    if (args[0] == "--api")
+
+    if (isApi)
     {
         Glob.IsApi = true;
     }
-    if (args[0] == "-l")
+
+    if (isLoud)
     {
         Glob.IsLoud = true;
     }
-    else
+
+    var inputFilePaths = args.Length > 1 ? args[1..] : Array.Empty<string>();
+
+    if (inputFilePaths.Length == 0)
     {
-        var inputFilePath = args[0];
-        if (File.Exists(inputFilePath) && Path.GetExtension(inputFilePath) == ".rn")
+        string currentDirectory = Directory.GetCurrentDirectory();
+        var ravenFiles = Directory.GetFiles(currentDirectory, "*.rn", SearchOption.AllDirectories);
+        if (ravenFiles.Length == 0)
         {
-            ProcessFile(inputFilePath, useDistDirectory);
+            Logger.RaiseProblem(
+                "No source files found in the current directory or its subdirectories."
+            );
         }
-        else
+        foreach (var ravenFile in ravenFiles)
         {
-            Console.WriteLine("Provide a valid .rn file path as an argument.");
+            ProcessFile(ravenFile, useDistDirectory);
         }
-    }
-}
-else if (args.Length == 2 && args[0] == "-d")
-{
-    useDistDirectory = true;
-    var inputFilePath = args[1];
-    if (File.Exists(inputFilePath) && Path.GetExtension(inputFilePath) == ".rn")
-    {
-        ProcessFile(inputFilePath, useDistDirectory);
     }
     else
     {
-        Console.WriteLine("Provide a valid .rn file path as an argument.");
+        foreach (var inputFilePath in inputFilePaths)
+        {
+            if (File.Exists(inputFilePath) && Path.GetExtension(inputFilePath) == ".rn")
+            {
+                ProcessFile(inputFilePath, useDistDirectory);
+            }
+            else
+            {
+                Console.WriteLine(
+                    $"Invalid file path or extension: {inputFilePath}. Provide a valid .rn file path."
+                );
+            }
+        }
     }
 }
-else
+catch (Exception ex)
 {
-    Console.WriteLine("Invalid arguments. Usage: [-d] [<input file path(s)>]");
+    Console.WriteLine($"Error: {ex.Message}");
+    Environment.Exit(1);
 }
