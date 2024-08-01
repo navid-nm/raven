@@ -1,0 +1,12 @@
+fn minMax(value, min, max)  = Math.min(Math.max(value, min), max);
+fn steps(steps)             = Math.ceil((minMax(0, 0.000001, 1)) * steps) * (1 / steps)
+fn getSlope(aT, aA1, aA2)   = 3.0 * aT * aT + 2.0 * aT + aA1
+fn addNums(a, b)            = a + b
+
+let results = [
+    { Function: "steps", Result: steps(10) }, 
+    { Function: "getSlope", Result: getSlope(1, 2, 3) }, 
+    { Function: "addNums", Result: addNums(5, 5) }
+]
+
+say.table(results)

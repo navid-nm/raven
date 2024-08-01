@@ -189,6 +189,16 @@ namespace Raven.Internal
             var patterns = new (string pattern, Func<Match, string> replacement)[]
             {
                 (@"\braw\((.*?)\)", match => match.Groups[1].Value),
+                (
+                    @"\bfn\s+(\w+)\s*(\([\w\s,]*\))?\s*=\s*(.+)",
+                    match =>
+                    {
+                        var funcName = match.Groups[1].Value;
+                        var parameters = match.Groups[2].Value;
+                        var body = match.Groups[3].Value;
+                        return $"function {funcName}{parameters} {{ return {body}; }}";
+                    }
+                ),
                 (@"\bfn(\*)?(?=\s|\()", match => "function" + (match.Groups[1].Value ?? "")),
                 (@"\bsay\.table\s*\(", match => "console.table("),
                 (@"\bsay\.group\s*\(", match => "console.group("),
