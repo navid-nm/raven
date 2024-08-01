@@ -223,7 +223,7 @@ fn activate(context) {
 
 fn deactivate() {}
 
-module.exports = {
+expose {
    activate,
    deactivate,
 }
