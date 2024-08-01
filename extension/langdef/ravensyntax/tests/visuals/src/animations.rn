@@ -1,0 +1,16 @@
+import cool.anime
+
+onready(fn() {
+    val box = doc.get("box")
+    if (box) {
+        // Animate the box element
+        val animation = anime({
+            targets: box,
+            translateX: 250,            // Move 250px along X-axis
+            duration: 2000,             // Animation duration in milliseconds
+            easing: 'easeInOutQuad',    // Animation easing function
+            loop: true,                 // Loop the animation indefinitely
+            direction: 'alternate'      // Alternate the animation direction
+        })
+    }
+})

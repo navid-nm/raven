@@ -209,6 +209,7 @@ namespace Raven.Internal
                 (@"\bdoc\.", match => "document."),
                 (@"\bwin\.", match => "window."),
                 (@"\bonready\s*\(", match => "document.addEventListener(\"DOMContentLoaded\","),
+                (@"\.str\.", match => ".toString."),
                 (@"\.str\s*\(\)", match => ".toString()"),
                 (@"\.num\s*\(\)", match => ".toNumber()"),
                 (@"\bdocument\.get\s*\(", match => "document.getElementById("),
