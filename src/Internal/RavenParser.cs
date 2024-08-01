@@ -276,19 +276,22 @@ namespace Raven.Internal
             code = StrictRegex().Replace(code, "\"use strict\";");
 
             // Fix for private member references
-            code = PrivateMemberReferenceRegex()
-                .Replace(
-                    code,
-                    match =>
-                    {
-                        var member = match.Value;
-                        if (member.StartsWith("this."))
+            if (code.Contains("closed"))
+            {
+                code = PrivateMemberReferenceRegex()
+                    .Replace(
+                        code,
+                        match =>
                         {
-                            return member.Replace("this.", "this.#");
+                            var member = match.Value;
+                            if (member.StartsWith("this."))
+                            {
+                                return member.Replace("this.", "this.#");
+                            }
+                            return member;
                         }
-                        return member;
-                    }
-                );
+                    );
+            }
 
             return code;
         }
