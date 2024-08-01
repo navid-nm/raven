@@ -58,7 +58,7 @@
          "patterns": [
             {
                "name": "keyword.control.raven",
-               "match": "\\b(if|while|for|strict|continue|open|map|join|filter|abbrev|closed|stat|return|fn|val|xval|xset|xlet|typeof|switch|case|die|tmp|init|elif|else|raw|new|enum|class|init|async|await|wait|win|doc|let|var|say|warn|import|do|then|end|break|in|of|use|expose|onready|typeof)\\b"
+               "match": "\\b(if|while|for|strict|continue|open|map|join|filter|abbrev|closed|stat|return|fn|val|xval|xset|xlet|typeof|switch|case|die|tmp|init|elif|else|raw|new|enum|class|init|async|await|wait|win|doc|let|var|say|warn|import|do|then|end|break|in|of|use|expose|onready|typeof|throw)\\b"
             }
          ]
       },
