@@ -2,7 +2,7 @@
 * For testing functional-style func definitions
 */
 
-fn minMax(value, min, max)  = Math.min(Math.max(value, min), max);
+fn minMax(value, min, max)  = Math.min(Math.max(value, min), max)
 fn steps(steps)             = Math.ceil((minMax(0, 0.000001, 1)) * steps) * (1 / steps)
 fn getSlope(aT, aA1, aA2)   = 3.0 * aT * aT + 2.0 * aT + aA1
 fn addNums(a, b)            = a + b

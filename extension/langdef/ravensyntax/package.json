@@ -28,6 +28,17 @@
             "configuration": "./language-configuration.json"
          }
       ],
+      "configuration": {
+         "type": "object",
+         "title": "Raven Extension Settings",
+         "properties": {
+            "raven.removeSemicolons": {
+               "type": "boolean",
+               "default": false,
+               "description": "Enable removal of redundant semicolons."
+            }
+         }
+      },
       "grammars": [
          {
             "language": "raven",

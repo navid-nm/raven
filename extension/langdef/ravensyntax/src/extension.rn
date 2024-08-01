@@ -1,6 +1,5 @@
 use vscode
-
-import linter
+val ravenlinter = use("./linter")
 
 // Converts tabs to a fixed number of spaces
 fn convertTabsToSpaces(code, tabSize = 4) {
@@ -107,10 +106,6 @@ fn alignDefinitions(code) {
 }
 
 // Helper function to replace text outside string literals and comments
-|| text          -> string
-|| regex         -> string
-|| replacement   -> string
-|| result        -> string
 fn replaceOutsideStringsAndComments(text, regex, replacement) {
    val stringAndCommentRegex = /(["'`].*?["'`]|\/\/.*?$)/gm;
    let result = "";
@@ -159,6 +154,7 @@ fn formatRavenDocument(document) {
       { regex: /\bconsole\.error\b/g, replacement: "warn" },
       { regex: /\bprocess\.exit\b\(\)/g, replacement: "end" },
       { regex: /\bprocess\.exit\b/g, replacement: "end" },
+      { regex: /\bmodule\.exports\s*=\s*/g, replacement: "expose " },
       { regex: /\bthis\./g, replacement: "my." },
       { regex: /\bconstructor\b/g, replacement: "init" },
       { regex: /\brequire\b/g, replacement: "use" },
@@ -182,6 +178,12 @@ fn formatRavenDocument(document) {
       );
    });
 
+   val config = vscode.workspace.getConfiguration("ravenlang");
+
+   if (config.get("removeSemicolons")) {
+      formattedText = formattedText.replace(/;\s*\n/g, "\n");
+   }
+
    // Replace statements like 'val <module> = use("<module>")' with 'use <module>'
    formattedText = formattedText.replace(
       /\b(?:val|val)\s+(\w+)\s*=\s*use\(["']\1["']\);?/g,
@@ -203,7 +205,8 @@ fn formatRavenDocument(document) {
 }
 
 fn activate(context) {
-   val linter = new RavenLinter();
+   val linter = new ravenlinter
+();
    vscode.workspace.onDidOpenTextDocument(linter.lintDocument, linter);
    vscode.workspace.onDidChangeTextDocument((event) =>
       linter.lintDocument(event.document)
@@ -226,4 +229,4 @@ fn deactivate() {}
 expose {
    activate,
    deactivate,
-}
+};
