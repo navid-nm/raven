@@ -188,7 +188,7 @@ namespace Raven.Internal
         {
             var patterns = new (string pattern, Func<Match, string> replacement)[]
             {
-                (@"raw\((.*?)\)", match => match.Groups[1].Value),
+                (@"\braw\((.*?)\)", match => match.Groups[1].Value),
                 (@"\bfn(\*)?(?=\s|\()", match => "function" + (match.Groups[1].Value ?? "")),
                 (@"\bsay\.table\s*\(", match => "console.table("),
                 (@"\bsay\.group\s*\(", match => "console.group("),
@@ -239,7 +239,7 @@ namespace Raven.Internal
                 ),
                 (@"\belif\b", match => "else if"),
                 (@"\bend\s*\(\s*(\d+)\s*\)", match => $"process.exit({match.Groups[1].Value});"),
-                (@"\b(?<!\.)end\b(?=\s|$|;)", match => "process.exit(0);"), // Ensure `end` is not preceded by a dot
+                (@"\b(?<!\.)end\b(?=\s|$|;)(?!\s*=)", match => "process.exit(0);"), // Matches end not preceded by dot and not followed by =
                 (@"\bexpose\s*{([^}]*)}", match => $"module.exports = {{{match.Groups[1].Value}}}"),
                 (@"\bexpose\s+(\w+)", match => $"module.exports = {match.Groups[1].Value}"), // New pattern for expose funcname
                 (@"(?<![!=])==(?!=)", match => "==="), // Replace '==' with '===' ensuring no '===' or '!=='
