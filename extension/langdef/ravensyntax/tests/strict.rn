@@ -1,3 +1,8 @@
+/**
+* This is not for testing the strict keyword.
+* It's for testing comparison strictness (== transpilation to ==)
+*/
+
 if (true == true) {
     say("Test pass #0")
 }
