@@ -189,7 +189,7 @@ namespace Raven.Internal
             var patterns = new (string pattern, Func<Match, string> replacement)[]
             {
                 (@"raw\((.*?)\)", match => match.Groups[1].Value),
-                (@"\bfn(?=\s|\()", match => "function"), // update to match `fn` followed by space or parenthesis
+                (@"\bfn(\*)?(?=\s|\()", match => "function" + (match.Groups[1].Value ?? "")),
                 (@"\bsay\.table\s*\(", match => "console.table("),
                 (@"\bsay\.group\s*\(", match => "console.group("),
                 (@"\bsay\.clear\s*\(", match => "console.clear("),
