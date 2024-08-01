@@ -15,10 +15,18 @@ namespace Raven.Internal
         {
             var code = HandleImports(_sourceCode);
 
-            code = HandleTemplates(code);
+            if (code == null)
+            {
+                return string.Empty;
+            }
+            if (code.Contains("rhtml"))
+            {
+                code = HandleTemplates(code);
+                code = HandleTemplateLiterals(code);
+            }
+
             code = ExtractAndProcessTypeHints(code);
             code = ExtractAndProcessAbbreviations(code);
-            code = HandleTemplateLiterals(code);
             code = ReplaceContextAware(code);
 
             ValidateGeneratedECMA(code, Glob.IsApi);
@@ -233,6 +241,7 @@ namespace Raven.Internal
                 (@"\bend\s*\(\s*(\d+)\s*\)", match => $"process.exit({match.Groups[1].Value});"),
                 (@"\b(?<!\.)end\b(?=\s|$|;)", match => "process.exit(0);"), // Ensure `end` is not preceded by a dot
                 (@"\bexpose\s*{([^}]*)}", match => $"module.exports = {{{match.Groups[1].Value}}}"),
+                (@"\bexpose\s+(\w+)", match => $"module.exports = {match.Groups[1].Value}"), // New pattern for expose funcname
                 (@"(?<![!=])==(?!=)", match => "==="), // Replace '==' with '===' ensuring no '===' or '!=='
                 (@"(?<![=!])!=(?!=)", match => "!=="), // Replace '!=' with '!==' ensuring no '!=='
             };
