@@ -1,0 +1,180 @@
+val { Worker, isMainThread, parentPort } = use("worker_threads")
+use os
+
+val smap = [
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,84,86,71,72,0,
+    0,67,68,0,0,77,0,75,78,0,0,0,89,83,65,65,66,87,0,82,
+    0,0,0,0,0,0,0,84,86,71,72,0,0,67,68,0,0,77,0,75,78,0,
+    0,0,89,83,65,65,66,87,0,82
+]
+
+val lineLen = 60
+val fullLineLen = lineLen + 1
+val caret = '>'.charCodeAt(0)
+val endLine = '\n'.charCodeAt(0)
+
+if (isMainThread) {
+    mainThread()
+} else {
+    workerThread()
+}
+
+async fn mainThread() {
+    let worker = null
+    let titleBuf = Buffer.allocUnsafe(lineLen)
+    let titleBufPos = 0
+    let titleBufPartial = false
+    
+    let dataArray = new SharedArrayBuffer(1 << 14)
+    let dataBuf = Buffer.from(dataArray)
+    let dataBufPos = 0
+
+    for await (let chunk of process.stdin) {
+        await onChunk(chunk)
+    }
+
+    await onSection()
+    await worker
+
+    async fn onChunk(chunk) {
+        val len = chunk.length
+        let i = 0
+
+        if (titleBufPartial) {
+            val endI = chunk.indexOf(endLine, i)
+            toTitleBuf(chunk, i, endI + 1)
+            titleBufPartial = false
+            i += endI + 1
+        }
+
+        val caretI = chunk.indexOf(caret, i)
+
+        if (caretI == -1) {
+            toBuf(chunk, i, len)
+        } else {
+            toBuf(chunk, i, caretI)
+            i = caretI
+            await onSection()
+            val endI = chunk.indexOf(endLine, i)
+            if (endI != -1) {
+                toTitleBuf(chunk, i, endI + 1)
+                return onChunk(chunk.subarray(endI + 1))
+            } else {
+                toTitleBuf(chunk, i, len)
+                titleBufPartial = true
+            }
+        }
+    }
+
+    fn toTitleBuf(buffer, from, to) {
+        buffer.copy(titleBuf, titleBufPos, from, to)
+        titleBufPos += to - from
+    }
+
+    fn toBuf(buffer, from, to) {
+        if (from == to) {
+            return
+        }
+
+        val len = to - from
+
+        while (dataBufPos + len > dataBuf.length) {
+            val newArr = new SharedArrayBuffer(dataBuf.length * 2)
+            val newBuf = Buffer.from(newArr)
+            dataBuf.copy(newBuf, 0, 0, dataBufPos)
+            dataArray = newArr
+            dataBuf = newBuf
+        }
+
+        buffer.copy(dataBuf, dataBufPos, from, to)
+        dataBufPos += len
+    }
+
+    async fn onSection() {
+        if (titleBufPos == 0) {
+            return
+        }
+
+        await worker
+
+        worker              = processData(titleBuf, titleBufPos, dataBuf, dataBufPos)
+        titleBuf            = Buffer.allocUnsafe(lineLen)
+        titleBufPos         = 0
+        titleBufPartial     = false
+        dataArray           = new SharedArrayBuffer(dataBuf.length)
+        dataBuf             = Buffer.from(dataArray)
+        dataBufPos          = 0
+    }
+
+    fn processData(titleBuf, titleBufLen, dataBuf, dataBufLen) {
+        return new Promise(resolve => {
+            val threads = Math.max(1, os.cpus().length - 2)
+            val lines = Math.ceil(dataBufLen / fullLineLen)
+            val dataLen = dataBufLen - lines
+            val chunkLen = Math.floor(dataLen / (2 * threads))
+
+            let waitp = 0
+            let bottomStart = 0
+            let bottomRealStart = 0
+            let topStart = dataLen
+            let topRealStart = topStart + Math.floor(topStart / lineLen)
+            
+            for (let i = 0; i < threads; i++) {
+                val bottomFinish = i < threads - 1 ? bottomStart + chunkLen : dataLen >> 1
+                val topFinish = i < threads - 1 ? topStart - chunkLen : dataLen >> 1
+                val bottomRealFinish = bottomFinish + Math.floor(bottomFinish / lineLen)
+                val topRealFinish = topFinish + Math.floor(topFinish / lineLen)
+                val worker = new Worker(__filename)
+                worker.postMessage({data: {
+                    dataArray: dataBuf.buffer,
+                    topFrom: topRealFinish,
+                    bottomFrom: bottomRealStart,
+                    topSize: topRealStart - topRealFinish,
+                    bottomSize: bottomRealFinish - bottomRealStart
+                }})
+                worker.on('exit', () => {
+                    waitp--
+                    if (waitp == 0) {
+                        resolve()
+                    }
+                })
+                waitp++
+                bottomStart = bottomFinish
+                bottomRealStart = bottomRealFinish
+                topStart = topFinish
+                topRealStart = topRealFinish
+            }
+        })
+            .then(() => {
+                process.stdout.write(titleBuf.subarray(0, titleBufLen))
+                process.stdout.write(dataBuf.subarray(0, dataBufLen))
+            })
+    }
+}
+
+fn workerThread() {
+    parentPort.on('message', message => {
+        writeBuf(message.data)
+        end
+    })
+    fn writeBuf({dataArray, topFrom, bottomFrom, topSize, bottomSize}) {
+        val input = new Uint8Array(dataArray, topFrom, topSize)
+        val output = new Uint8Array(dataArray, bottomFrom, bottomSize)
+        let i = topSize - 1
+        let o = 0
+        while (i >= 0) {
+            let char1 = input[i--]
+            if (char1 == endLine) {
+                char1 = input[i--]
+            }
+            let char2 = output[o++]
+            if (char2 == endLine) {
+                char2 = output[o++]
+            }
+            output[o - 1] = smap[char1]
+            input[i + 1] = smap[char2]
+        }
+    }
+}

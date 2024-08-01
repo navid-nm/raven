@@ -5,12 +5,12 @@ namespace Raven.Interface
 {
     public static class Execution
     {
-        public static void ProcessFile(string inputFilePath, bool useDistDirectory)
+        public static string? ProcessFile(string inputFilePath, bool useDistDirectory)
         {
             if (!File.Exists(inputFilePath))
             {
                 Logger.RaiseProblem($"The input file '{inputFilePath}' does not exist.");
-                return;
+                return "";
             }
 
             var sourceCode = File.ReadAllText(inputFilePath);
@@ -42,12 +42,14 @@ namespace Raven.Interface
                     {
                         Logger.Log($"Transpiled to -> {outputFilePath}", State.SUCCESS);
                     }
+                    return outputFilePath;
                 }
                 catch (Exception ex)
                 {
                     Logger.RaiseProblem($"Issue during transpilation: {ex.Message}");
                 }
             }
+            return string.Empty;
         }
     }
 }

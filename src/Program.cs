@@ -8,13 +8,16 @@ bool showVersion = false;
 bool isApi = false;
 bool isLoud = false;
 
+string runFile = string.Empty;
+
 var options = new OptionSet
 {
     { "d|dist", "Use the 'dist' directory for output.", v => useDistDirectory = v != null },
     { "l|loud", "Print detailed logs.", v => isLoud = v != null },
     { "a|api", "Enable API mode.", v => isApi = v != null },
     { "v|version", "Show version information.", v => showVersion = v != null },
-    { "h|help", "Show help message.", v => showHelp = v != null }
+    { "h|help", "Show help message.", v => showHelp = v != null },
+    { "r|run=", "Compile and run the specified Raven file.", v => runFile = v }
 };
 
 try
@@ -23,7 +26,7 @@ try
 
     if (showHelp)
     {
-        Console.WriteLine("Usage: [options] [<input file path(s)>]");
+        Console.WriteLine("Usage: raven [options] [<input file path(s)>]");
         options.WriteOptionDescriptions(Console.Out);
         return;
     }
@@ -46,6 +49,15 @@ try
 
     var inputFilePaths = args.Length > 1 ? args[1..] : [];
 
+    if (runFile.Length > 0)
+    {
+        string outName = Execution.ProcessFile(runFile, useDistDirectory) ?? string.Empty;
+        if (outName.Length == 0)
+        {
+            return;
+        }
+        OSCaller.RunProgram(outName);
+    }
     if (inputFilePaths.Length == 0)
     {
         string currentDirectory = Directory.GetCurrentDirectory();

@@ -174,11 +174,11 @@ function formatRavenDocument(document) {
       );
    });
 
-   const config = vscode.workspace.getConfiguration("ravenlang");
+   // const config = vscode.workspace.getConfiguration("ravenlang");
 
-   if (config.get("removeSemicolons")) {
-      formattedText = formattedText.replace(/;\s*\n/g, "\n");
-   }
+   // if (config.get("removeSemicolons")) {
+   formattedText = formattedText.replace(/;\s*\n/g, "\n");
+   //}
 
    // Replace statements like 'val <module> = use("<module>")' with 'use <module>'
    formattedText = formattedText.replace(
