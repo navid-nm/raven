@@ -44,7 +44,7 @@ try
         Glob.IsLoud = true;
     }
 
-    var inputFilePaths = args.Length > 1 ? args[1..] : Array.Empty<string>();
+    var inputFilePaths = args.Length > 1 ? args[1..] : [];
 
     if (inputFilePaths.Length == 0)
     {
