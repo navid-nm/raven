@@ -1,0 +1,11 @@
+let x: number = 2
+
+fn hello(world: string) -> string {
+    return world
+}
+
+fn sayBack(world) {
+    return world
+}
+
+fn doStuffInline(test: string) -> string = test
