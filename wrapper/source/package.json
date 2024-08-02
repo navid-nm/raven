@@ -3,7 +3,7 @@
    "version": "1.0.0",
    "description": "",
    "bin": {
-      "raven-transpiler": "lib/raven-wrapper.js"
+      "raven": "lib/wrapper.js"
    },
    "files": [
       "bin/",
