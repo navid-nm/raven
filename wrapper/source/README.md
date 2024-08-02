@@ -1,6 +1,6 @@
 # Raven
 
-Raven is a transpiler that affords syntactic sugar over JS.
+Transpiler that compiles Raven to JS.
 
 https://github.com/navid-nm/raven
 

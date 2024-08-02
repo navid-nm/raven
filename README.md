@@ -1,30 +1,43 @@
 # Raven
 
-Transpiler that affords syntactic sugar over JS, aiming to make JS less ugly without adding any complexity.
-
-Reason: JS sucks ass, is verbose, and is ugly.
+Language that compiles to JS. Specifically for simplifying JS-related code, making it more concise, typesafe and expressive.
 
 ---
 
 Examples:
 
-```d
+```
+fn add(x, y) = x + y
+
 fn main() {
-    say("test")
+    val result = add(1, 2)
+    if (result == 3) {
+        say("will always print")
+    }
 }
 ```
 
 Transpiles to the following JS:
 
 ```
-function main() {
-    console.log("test");
+"use strict";
+
+function add(x, y) {
+   return x + y;
 }
+
+function main() {
+   const result = add(1, 2);
+   if (result === 3) {
+      console.log("will always print");
+   }
+}
+
 ```
 
 ---
 
-Typehints:
+Types:
 
 ```d
 || cn       -> Connection
