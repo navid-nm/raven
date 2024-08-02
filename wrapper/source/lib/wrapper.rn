@@ -7,13 +7,12 @@ val isWin      = process.platform == "win32"
 if (isWin) 
 {
    val ravenPath = path.join(__dirname, "../bin/raven.exe")
+   val command = ravenPath + " " + process.argv.slice(2).join(" ")
 
    if (!fs.existsSync(ravenPath)) {
       say.error("Raven executable not found in bin dir.")
       end(1)
    }
-
-   val command = `"${ravenPath}" ${process.argv.slice(2).join(" ")}`
 
    exec(command, (error, stdout, stderr) => 
    {
@@ -23,7 +22,7 @@ if (isWin)
       }
 
       if (stderr) {
-         say.error(`Error: ${stderr}`)
+         say.error("Error:", stderr)
       }
 
       if (stdout) {
