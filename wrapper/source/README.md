@@ -14,7 +14,7 @@ VSCode Extension: https://marketplace.visualstudio.com/items?itemName=NavidM.rav
 
 ## Installation and Usage
 
-`npm install -g raven`
+`npm install -g ravenlang`
 
 Run "raven" in commandline without any args to compile all .rn files in current dir and containing subdirs to .js.
 

@@ -1,5 +1,5 @@
 {
-   "name": "raven",
+   "name": "ravenlang",
    "version": "1.0.1",
    "description": "",
    "bin": {
@@ -15,7 +15,7 @@
       "test": "echo \"Error: no test specified\" && exit 1"
    },
    "keywords": [],
-   "author": "navid-m",
+   "author": "navidm",
    "homepage": "https://ravenlang.pages.dev",
    "license": "ISC"
 }
