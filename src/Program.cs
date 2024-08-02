@@ -33,7 +33,7 @@ try
 
     if (showVersion)
     {
-        Console.WriteLine("1.1.1");
+        Console.WriteLine("1.2.0");
         return;
     }
 
