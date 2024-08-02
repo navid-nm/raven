@@ -13,9 +13,7 @@ namespace Raven.Internal
 
         public string Transpile()
         {
-            var code = Common.StrictLiteral;
-
-            code += HandleImports(_sourceCode);
+            var code = HandleImports(_sourceCode);
 
             if (code == null)
             {
@@ -30,6 +28,7 @@ namespace Raven.Internal
             code = ExtractAndProcessTypeHints(code);
             code = ExtractAndProcessAbbreviations(code);
             code = ReplaceContextAware(code);
+            code = Common.StrictLiteral + code;
 
             ValidateGeneratedECMA(code, Glob.IsApi);
 
