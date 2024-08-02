@@ -1,25 +1,25 @@
 use vscode
-val ravenlinter = use("./linter")
+
+val RavenLinter = use("./linter");
 
 // Converts tabs to a fixed number of spaces
-fn convertTabsToSpaces(code, tabSize = 4) {
-   val lines = code.split("\n")
+fn convertTabsToSpaces(code, tabSize = 5) {
+   val lines = code.split("\n");
    return lines
       .map((line) =>
          line.replace(/^\t+/g, (match) =>
             " ".repeat(match.length * tabSize)
          )
       )
-      .join("\n")
+      .join("\n");
 }
 
 // Aligns type definitions and normalizes tabs to 4 spaces
-// You'll see below the result of this alignment :)
-||code          -> string
-||typeDefLines  -> string[]
-||lines         -> string[]
+|| code   -> string
+|| lines  -> string[]
 fn alignDefinitions(code) {
-   val lines = code.split("\n")
+   val lines = code.split("\n");
+
    // Extract and process lines for type definitions
    val typeDefLines = lines.filter(
       (line) =>
@@ -27,7 +27,8 @@ fn alignDefinitions(code) {
          line.trim().startsWith("xval") ||
          line.trim().startsWith("xlet") ||
          line.trim().startsWith("xvar")
-   )
+   );
+
    // Find the maximum length of type definitions
    val maxLength = Math.max(
       ...typeDefLines.map((line) => {
@@ -36,30 +37,32 @@ fn alignDefinitions(code) {
             : line
                  .trim()
                  .slice(line.trim().indexOf(" ") + 1)
-                 .trim()
-         val index = trimmedLine.indexOf("->")
+                 .trim();
+         val index = trimmedLine.indexOf("->");
          return index != -1
             ? trimmedLine.slice(0, index).trim().length
-            : 0
+            : 0;
       })
-   )
+   );
+
    // Check if any line is misaligned
-   let needsAlignment = false
+   let needsAlignment = false;
    typeDefLines.forEach((line) => {
       val trimmedLine = line.trim().startsWith("||")
          ? line.trim().slice(2).trim()
          : line
               .trim()
               .slice(line.trim().indexOf(" ") + 1)
-              .trim()
-      val index = trimmedLine.indexOf("->")
+              .trim();
+      val index = trimmedLine.indexOf("->");
       if (
          index != -1 &&
          trimmedLine.slice(0, index).trim().length != maxLength
       ) {
-         needsAlignment = true
+         needsAlignment = true;
       }
-   })
+   });
+
    // Apply the alignment if necessary
    if (needsAlignment) {
       val formattedLines = lines
@@ -76,55 +79,59 @@ fn alignDefinitions(code) {
                        .trim()
                        .slice(line.trim().indexOf(" ") + 1)
                        .trim(); // Remove leading keyword
-               val index = trimmedLine.indexOf("->")
+               val index = trimmedLine.indexOf("->");
                if (index != -1) {
                   val prefix = line.slice(
                      0,
                      line.indexOf(trimmedLine.trim())
-                  )
+                  );
                   val beforeArrow = trimmedLine
                      .slice(0, index)
                      .trim()
-                     .padEnd(maxLength + 1)
-                  val afterArrow = trimmedLine.slice(index)
-                  return `${prefix}${beforeArrow} ${afterArrow}`
+                     .padEnd(maxLength + 1);
+                  val afterArrow = trimmedLine.slice(index);
+                  return `${prefix}${beforeArrow} ${afterArrow}`;
                }
                return line; // Return line unchanged if no "->" found
             }
-            return line
+            return line;
          })
-         .join("\n")
-      return convertTabsToSpaces(formattedLines)
+         .join("\n");
+
+      return convertTabsToSpaces(formattedLines);
    }
 
-   return convertTabsToSpaces(code)
+   return convertTabsToSpaces(code);
 }
 
 // Helper function to replace text outside string literals and comments
 fn replaceOutsideStringsAndComments(text, regex, replacement) {
-   val stringAndCommentRegex = /(["'`].*?["'`]|\/\/.*?$)/gm
-   let result = ""
-   let lastIndex = 0
+   val stringAndCommentRegex = /(["'`].*?["'`]|\/\/.*?$)/gm;
+   let result = "";
+   let lastIndex = 0;
+
    // Find all string literals and comments
    text.replace(stringAndCommentRegex, (match, p1, offset) => {
       // Replace text outside the string literals and comments
       result += text
          .substring(lastIndex, offset)
-         .replace(regex, replacement)
+         .replace(regex, replacement);
       // Append the string literal or comment without changes
-      result += match
+      result += match;
       // Update the last processed index
-      lastIndex = offset + match.length
-      return match
-   })
+      lastIndex = offset + match.length;
+      return match;
+   });
+
    // Replace text after the last string literal or comment
-   result += text.substring(lastIndex).replace(regex, replacement)
-   return result
+   result += text.substring(lastIndex).replace(regex, replacement);
+   return result;
 }
 
 // Helper function to handle regex replacements without repeated escaping
 fn formatRavenDocument(document) {
-   let formattedText = document.getText()
+   let formattedText = document.getText();
+
    // Define the replacements
    val replacements = [
       { regex: /\bconsole\.log\b/g, replacement: "say" },
@@ -159,53 +166,59 @@ fn formatRavenDocument(document) {
       { regex: /\belse\s+if\b/g, replacement: "elif" },
       { regex: /==/g, replacement: "==" }, // Replace '===' with '=='
       { regex: /!=/g, replacement: "!=" }, // Replace '!==' with '!='
-   ]
+   ];
+
    // Apply the replacements outside string literals and comments
    replacements.forEach(({ regex, replacement }) => {
       formattedText = replaceOutsideStringsAndComments(
          formattedText,
          regex,
          replacement
-      )
-   })
-   val config = vscode.workspace.getConfiguration("ravenlang")
-   if (config.get("removeSemicolons")) {
-      formattedText = formattedText.replace(/;\s*\n/g, "\n")
-   }
+      );
+   });
+
+   // const config = vscode.workspace.getConfiguration("ravenlang");
+
+   // if (config.get("removeSemicolons")) {
+   // formattedText = formattedText.replace(/(?<!\bend)\s*;\s*\n/g, "\n");
 
    // Replace statements like 'val <module> = use("<module>")' with 'use <module>'
    formattedText = formattedText.replace(
       /\b(?:val|val)\s+(\w+)\s*=\s*use\(["']\1["']\);?/g,
       "use $1"
-   )
+   );
+
    formattedText = formattedText.replace(
       /['"]use\s+strict['"];\s*/g,
       "\n\n"
-   )
-   formattedText = alignDefinitions(formattedText)
+   );
+
+   formattedText = alignDefinitions(formattedText);
    val fullRange = new vscode.Range(
       document.positionAt(0),
       document.positionAt(document.getText().length)
-   )
-   return [vscode.TextEdit.replace(fullRange, formattedText)]
+   );
+
+   return [vscode.TextEdit.replace(fullRange, formattedText)];
 }
 
 fn activate(context) {
-   val linter = new ravenlinter
-()
-   vscode.workspace.onDidOpenTextDocument(linter.lintDocument, linter)
+   val linter = new RavenLinter();
+   vscode.workspace.onDidOpenTextDocument(linter.lintDocument, linter);
    vscode.workspace.onDidChangeTextDocument((event) =>
       linter.lintDocument(event.document)
-   )
-   vscode.workspace.onDidSaveTextDocument(linter.lintDocument, linter)
+   );
+   vscode.workspace.onDidSaveTextDocument(linter.lintDocument, linter);
+
    context.subscriptions.push(
       vscode.languages.registerDocumentFormattingEditProvider("raven", {
          provideDocumentFormattingEdits(document) {
-            return formatRavenDocument(document)
+            return formatRavenDocument(document);
          },
       })
-   )
-   context.subscriptions.push(linter)
+   );
+
+   context.subscriptions.push(linter);
 }
 
 fn deactivate() {}
@@ -213,4 +226,4 @@ fn deactivate() {}
 expose {
    activate,
    deactivate,
-}
+};
