@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.RegularExpressions;
 using Esprima;
 using Raven.Data;
@@ -29,6 +30,7 @@ namespace Raven.Internal
             code = ExtractAndProcessAbbreviations(code);
             code = ReplaceContextAware(code);
             code = Common.StrictLiteral + code;
+            code = PurgeStrictIssue(code);
 
             ValidateGeneratedECMA(code, Glob.IsApi);
 
@@ -409,16 +411,21 @@ namespace Raven.Internal
             return string.Empty;
         }
 
-        [GeneratedRegex(@"import\s+([\w\.]+)\s*;?")]
+        private static string PurgeStrictIssue(string code)
+        {
+            return code.Replace("\"const { strict } = require(\"strict\");\";", "");
+        }
+
+        [GeneratedRegex(@"\bimport\s+([\w\.]+)\s*;?")]
         private static partial Regex ImportPatternRegex();
 
-        [GeneratedRegex(@"use\s+(\w+)\s*")]
+        [GeneratedRegex(@"\buse\s+(\w+)\s*")]
         private static partial Regex UseWithoutParenthesesRegex();
 
-        [GeneratedRegex(@"rhtml\(""(.*?)""\)")]
+        [GeneratedRegex(@"\brhtml\(""(.*?)""\)")]
         private static partial Regex TemplatePatternRegex();
 
-        [GeneratedRegex(@"static\s+#\s*(async\s+)?(\w+\s*\()", RegexOptions.Singleline)]
+        [GeneratedRegex(@"\bstatic\s+#\s*(async\s+)?(\w+\s*\()", RegexOptions.Singleline)]
         private static partial Regex StaticRegex();
 
         [GeneratedRegex(@"async\s+#\s*(static\s+)?(\w+\s*\()", RegexOptions.Singleline)]
