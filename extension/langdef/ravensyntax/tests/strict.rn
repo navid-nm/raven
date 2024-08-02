@@ -1,6 +1,5 @@
 /**
-* This is not for testing the strict keyword.
-* It's for testing comparison strictness (== transpilation to triple =)
+* Testing comparison strictness (== transpilation to triple =)
 */
 
 if (true == true) {

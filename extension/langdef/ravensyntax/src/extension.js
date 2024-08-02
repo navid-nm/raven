@@ -188,7 +188,7 @@ function formatRavenDocument(document) {
 
    formattedText = formattedText.replace(
       /['"]use\s+strict['"];\s*/g,
-      "strict\n\n"
+      "\n\n"
    );
 
    formattedText = alignDefinitions(formattedText);

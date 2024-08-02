@@ -1,26 +1,24 @@
-strict
-
 (fn (content) {
    // Control sequences for coloring
    xset(content) {
-      black             = "\x1b[30m";
-      red               = "\x1b[31m";
-      green             = "\x1b[32m";
-      yellow            = "\x1b[33m";
-      blue              = "\x1b[34m";
-      magenta           = "\x1b[35m";
-      cyan              = "\x1b[36m";
-      lightgray         = "\x1b[37m";
-      default           = "\x1b[39m";
-      darkgray          = "\x1b[90m";
-      lightred          = "\x1b[91m";
-      lightgreen        = "\x1b[92m";
-      lightyellow       = "\x1b[93m";
-      lightblue         = "\x1b[94m";
-      lightmagenta      = "\x1b[95m";
-      lightcyan         = "\x1b[96m";
-      white             = "\x1b[97m";
-      reset             = "\x1b[0m";
+      black             = "\x1b[30m"
+      red               = "\x1b[31m"
+      green             = "\x1b[32m"
+      yellow            = "\x1b[33m"
+      blue              = "\x1b[34m"
+      magenta           = "\x1b[35m"
+      cyan              = "\x1b[36m"
+      lightgray         = "\x1b[37m"
+      default           = "\x1b[39m"
+      darkgray          = "\x1b[90m"
+      lightred          = "\x1b[91m"
+      lightgreen        = "\x1b[92m"
+      lightyellow       = "\x1b[93m"
+      lightblue         = "\x1b[94m"
+      lightmagenta      = "\x1b[95m"
+      lightcyan         = "\x1b[96m"
+      white             = "\x1b[97m"
+      reset             = "\x1b[0m"
    }
    
    // Do not color it if color is not specified
@@ -34,23 +32,20 @@ strict
       // If an array of numbers is passed it is transformed to
       // an array of exactly one array with numbers
       if (typeof series[0] == "number") {
-         series = [series];
+         series = [series]
       }
 
-      cfg = typeof cfg != "undefined" ? cfg : {};
-
-      let min = typeof cfg.min != "undefined" ? cfg.min : series[0][0];
-      let max = typeof cfg.max != "undefined" ? cfg.max : series[0][0];
-
+      cfg = typeof cfg != "undefined" ? cfg : {}
+      let min = typeof cfg.min != "undefined" ? cfg.min : series[0][0]
+      let max = typeof cfg.max != "undefined" ? cfg.max : series[0][0]
       for (let j = 0; j < series.length; j++) {
          for (let i = 0; i < series[j].length; i++) {
-            min = Math.min(min, series[j][i]);
-            max = Math.max(max, series[j][i]);
+            min = Math.min(min, series[j][i])
+            max = Math.max(max, series[j][i])
          }
       }
 
-      val defaultSymbols = ["┼", "┤", "╶", "╴", "─", "╰", "╭", "╮", "╯", "│"];
-
+      val defaultSymbols = ["┼", "┤", "╶", "╴", "─", "╰", "╭", "╮", "╯", "│"]
       xlet {
          range    = Math.abs(max - min)
          offset   = typeof cfg.offset != "undefined" ? cfg.offset : 3
@@ -79,11 +74,11 @@ strict
               }
 
       // Empty space
-      let result = new Array(rows + 1); 
+      let result = new Array(rows + 1)
       for (let i = 0; i <= rows; i++) {
-         result[i] = new Array(width);
+         result[i] = new Array(width)
          for (let j = 0; j < width; j++) {
-            result[i][j] = " ";
+            result[i][j] = " "
          }
       }
       for (let y = min2; y <= max2; ++y) {
@@ -91,52 +86,50 @@ strict
          let label = format(
             rows > 0 ? max - ((y - min2) * range) / rows : y,
             y - min2
-         );
-         result[y - min2][Math.max(offset - label.length, 0)] = label;
-         result[y - min2][offset - 1] = y == 0 ? symbols[0] : symbols[1];
+         )
+         result[y - min2][Math.max(offset - label.length, 0)] = label
+         result[y - min2][offset - 1] = y == 0 ? symbols[0] : symbols[1]
       }
 
       for (let j = 0; j < series.length; j++) {
-         let currentColor = colors[j % colors.length];
-         let y0 = Math.round(series[j][0] * ratio) - min2;
-
+         let currentColor = colors[j % colors.length]
+         let y0 = Math.round(series[j][0] * ratio) - min2
          // First value
-         result[rows - y0][offset - 1] = colored(symbols[0], currentColor); 
-
+         result[rows - y0][offset - 1] = colored(symbols[0], currentColor)
          for (let x = 0; x < series[j].length - 1; x++) {
             // Plot the line
-            let y0 = Math.round(series[j][x + 0] * ratio) - min2;
-            let y1 = Math.round(series[j][x + 1] * ratio) - min2;
+            let y0 = Math.round(series[j][x + 0] * ratio) - min2
+            let y1 = Math.round(series[j][x + 1] * ratio) - min2
             if (y0 == y1) {
                result[rows - y0][x + offset] = colored(
                   symbols[4],
                   currentColor
-               );
+               )
             } else {
                result[rows - y1][x + offset] = colored(
                   y0 > y1 ? symbols[5] : symbols[6],
                   currentColor
-               );
+               )
                result[rows - y0][x + offset] = colored(
                   y0 > y1 ? symbols[7] : symbols[8],
                   currentColor
-               );
-               let from = Math.min(y0, y1);
-               let to = Math.max(y0, y1);
+               )
+               let from = Math.min(y0, y1)
+               let to = Math.max(y0, y1)
                for (let y = from + 1; y < to; y++) {
                   result[rows - y][x + offset] = colored(
                      symbols[9],
                      currentColor
-                  );
+                  )
                }
             }
          }
       }
       return result
          .map(fn (x) {
-            return x.join("");
+            return x.join("")
          })
-         .join("\n");
+         .join("\n")
    }
 
    // Example data and configuration
@@ -152,7 +145,7 @@ strict
    }
 
    // Plot and output
-   say(content.plot(series, config));
+   say(content.plot(series, config))
 })(
    typeof content == "undefined"
       ? (this["asciichart"] = {})
