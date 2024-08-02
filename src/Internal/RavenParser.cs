@@ -116,7 +116,7 @@ namespace Raven.Internal
                 var type = match.Groups[2].Value;
 
                 // Remove the type hint from the code
-                code = code.Replace(match.Value, $"/* {variable}: {type} */");
+                code = code.Replace(match.Value, $"{variable}");
 
                 // Placeholder to store type information
                 if (!_typeHints.ContainsKey(variable))
@@ -126,7 +126,7 @@ namespace Raven.Internal
             }
 
             // Update function signature patterns to include return types
-            var fnPattern = @"\bfn\s+(\w+)\s*(\([\w\s,:\[\]]*\))?\s*->?\s*([\w\[\]]+)?\s*=\s*(.+)";
+            var fnPattern = @"\bfn\s+(\w+)\s*(\([\w\s,:\[\]]*\))?\s*->?\s*([\w\[\]]+)?\s*{";
             var fnRegex = new Regex(fnPattern);
             var fnMatches = fnRegex.Matches(code);
 
@@ -135,16 +135,11 @@ namespace Raven.Internal
                 var funcName = match.Groups[1].Value;
                 var parameters = match.Groups[2].Value;
                 var returnType = match.Groups[3].Value;
-                var body = match.Groups[4].Value;
 
                 // Adjust function signature
                 var signature = $"function {funcName}{parameters}";
-                if (!string.IsNullOrEmpty(returnType))
-                {
-                    signature += $": {returnType}";
-                }
 
-                code = code.Replace(match.Value, $"{signature} {{ {body} }}");
+                code = code.Replace(match.Value, $"{signature} {{");
             }
 
             return code;
