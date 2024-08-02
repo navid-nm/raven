@@ -290,10 +290,10 @@ namespace Raven.Internal
             code = StaticAsyncRegex().Replace(code, "async $1#$2");
 
             // Fix for space between # and variable name
-            code = PrivateMemberSpaceRegex().Replace(code, "#$1");
+            code = PrivateMemberSpaceRegex().Replace(code, "$1");
 
             // Fix for private member references
-            if (code.Contains("closed"))
+            if (TemporaryRawCloseCheckRegex().Matches(code).Count > 0)
             {
                 code = PrivateMemberReferenceRegex()
                     .Replace(
@@ -303,7 +303,8 @@ namespace Raven.Internal
                             var member = match.Value;
                             if (member.StartsWith("this."))
                             {
-                                return member.Replace("this.", "this.#");
+                                //TODO: Amend to properly handle private properties
+                                return member.Replace("this.", "this.");
                             }
                             return member;
                         }
@@ -436,5 +437,8 @@ namespace Raven.Internal
 
         [GeneratedRegex(@"\b(this\.)\w+\b")]
         private static partial Regex PrivateMemberReferenceRegex();
+
+        [GeneratedRegex(@"(?<!['\w])closed(?!['\w])")]
+        private static partial Regex TemporaryRawCloseCheckRegex();
     }
 }
