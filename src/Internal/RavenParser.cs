@@ -224,8 +224,9 @@ namespace Raven.Internal
                 (@"\.num\s*\(\)", match => ".toNumber()"),
                 (@"\bdocument\.get\s*\(", match => "document.getElementById("),
                 (@"\bwin\.onload\s*\(", match => "window.onload"),
+                (@"\.listen\s*\(", match => ".addEventListener("),
+                (@"\.unlisten\s*\(", match => ".removeEventListener("),
                 (@"\bdocument\.make\s*\(", match => "document.createElement("),
-                (@"\bdocument\.listen\s*\(", match => "document.addEventListener("),
                 (@"\.put\s*\(", match => ".appendChild("),
                 (@"&ready", match => "\"DOMContentLoaded\""),
                 (@"\bwait\s*\(", match => "setTimeout("),
@@ -233,7 +234,7 @@ namespace Raven.Internal
                 (@"xset\((.*?)\)\s*{([^}]*)}", ReplaceXset),
                 (@"xval\s*{([^}]*)}", ReplaceXval),
                 (@"xvar\s*{([^}]*)}", ReplaceXvar),
-                (@"val\b", match => "const"), // Replaces `val` with `const`
+                (@"val\b", match => "const"),
                 (@"\bclosed\s+stat\b", match => "static #"),
                 (@"\bopen\s+stat\b", match => "static "),
                 (@"\bclosed\s+async\b", match => "async #"),
@@ -250,11 +251,15 @@ namespace Raven.Internal
                 ),
                 (@"\belif\b", match => "else if"),
                 (@"\bend\s*\(\s*(\d+)\s*\)", match => $"process.exit({match.Groups[1].Value});"),
-                (@"\b(?<!\.)end\b(?=\s|$|;)(?!\s*=)", match => "process.exit(0);"), // Matches end not preceded by dot and not followed by =
+                // Matches end not preceded by dot and not followed by =
+                (@"\b(?<!\.)end\b(?=\s|$|;)(?!\s*=)", match => "process.exit(0);"),
                 (@"\bexpose\s*{([^}]*)}", match => $"module.exports = {{{match.Groups[1].Value}}}"),
-                (@"\bexpose\s+(\w+)", match => $"module.exports = {match.Groups[1].Value}"), // New pattern for expose funcname
-                (@"(?<![!=])==(?!=)", match => "==="), // Replace '==' with '===' ensuring no '===' or '!=='
-                (@"(?<![=!])!=(?!=)", match => "!=="), // Replace '!=' with '!==' ensuring no '!=='
+                // New pattern for expose funcname
+                (@"\bexpose\s+(\w+)", match => $"module.exports = {match.Groups[1].Value}"),
+                // Replace '==' with '===' ensuring no '===' or '!=='
+                (@"(?<![!=])==(?!=)", match => "==="),
+                // Replace '!=' with '!==' ensuring no '!=='
+                (@"(?<![=!])!=(?!=)", match => "!=="),
             };
 
             foreach (var (pattern, replacement) in patterns)
