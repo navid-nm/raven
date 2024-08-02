@@ -30,7 +30,7 @@ function main() {
 }
 ```
 
-Typehints:
+Types:
 
 ```
 || cn       -> Connection
