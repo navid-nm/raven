@@ -9,6 +9,7 @@ destination_path = r"A:\Scripts\Raven.exe"
 # Function to run the dotnet publish command
 def run_dotnet_publish():
     try:
+        print("Running dotnet publish")
         # Run the dotnet publish command
         result = subprocess.run(["dotnet", "publish"], check=True, text=True, capture_output=True)
         print("Dotnet publish output:", result.stdout)
