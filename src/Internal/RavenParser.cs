@@ -13,13 +13,15 @@ namespace Raven.Internal
 
         public string Transpile()
         {
-            var code = HandleImports(_sourceCode);
+            var code = Common.StrictLiteral;
+
+            code += HandleImports(_sourceCode);
 
             if (code == null)
             {
                 return string.Empty;
             }
-            if (code.Contains("rhtml"))
+            if (code.Contains(Common.RavenRHTMLLiteral))
             {
                 code = HandleTemplates(code);
                 code = HandleTemplateLiterals(code);
@@ -111,10 +113,9 @@ namespace Raven.Internal
                 var variable = match.Groups[1].Value;
                 if (!_typeHints.ContainsKey(variable))
                 {
-                    // Placeholder as type is not used further
+                    // Placeholder as type is currently not used further
                     _typeHints[variable] = "type";
                 }
-
                 // Remove the type hint from the code
                 code = code.Replace(match.Value, "");
             }
@@ -289,7 +290,6 @@ namespace Raven.Internal
 
             // Fix for space between # and variable name
             code = PrivateMemberSpaceRegex().Replace(code, "#$1");
-            code = StrictRegex().Replace(code, "\"use strict\";");
 
             // Fix for private member references
             if (code.Contains("closed"))
@@ -430,8 +430,5 @@ namespace Raven.Internal
 
         [GeneratedRegex(@"\b(this\.)\w+\b")]
         private static partial Regex PrivateMemberReferenceRegex();
-
-        [GeneratedRegex(@"\bstrict\b")]
-        private static partial Regex StrictRegex();
     }
 }
