@@ -75,3 +75,5 @@ cn.on("ReceiveVideo", fn(video)
 ```
 
 ---
+
+&copy; 2024 Navid Momtahen
