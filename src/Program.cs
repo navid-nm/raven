@@ -4,6 +4,7 @@ using Raven.Interface;
 
 bool useDistDirectory = false;
 bool showHelp = false;
+bool showAbout = false;
 bool showVersion = false;
 bool isApi = false;
 bool isLoud = false;
@@ -15,9 +16,10 @@ var options = new OptionSet
     { "d|dist", "Use the 'dist' directory for output.", v => useDistDirectory = v != null },
     { "l|loud", "Print detailed logs.", v => isLoud = v != null },
     { "a|api", "Enable API mode.", v => isApi = v != null },
+    { "r|run=", "Compile and run the specified Raven file.", v => runFile = v },
     { "v|version", "Show version information.", v => showVersion = v != null },
     { "h|help", "Show help message.", v => showHelp = v != null },
-    { "r|run=", "Compile and run the specified Raven file.", v => runFile = v }
+    { "about", "Show about message.", v => showAbout = v != null },
 };
 
 try
@@ -33,7 +35,13 @@ try
 
     if (showVersion)
     {
-        Console.WriteLine("1.2.0");
+        Console.WriteLine(Meta.Version);
+        return;
+    }
+
+    if (showAbout)
+    {
+        Meta.ShowAbout();
         return;
     }
 
