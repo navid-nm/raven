@@ -1,6 +1,6 @@
-let x: number = 2
+let x :: number = 2
 
-fn hello(world: string) -> string {
+fn hello(world:: string) -> string {
     return world
 }
 
@@ -8,4 +8,4 @@ fn sayBack(world) {
     return world
 }
 
-fn doStuffInline(test: string) -> string = test
+fn doStuffInline(test) -> string = test

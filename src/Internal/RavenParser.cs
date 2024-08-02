@@ -104,8 +104,24 @@ namespace Raven.Internal
 
         private string ExtractAndProcessTypeHints(string code)
         {
+            var oldTypeHintPattern = @"\|\|\s*(\w+)\s*->\s*[\w\[\]]+";
+            var oldTypeHintRegex = new Regex(oldTypeHintPattern);
+            var oldMatches = oldTypeHintRegex.Matches(code);
+
+            foreach (Match match in oldMatches)
+            {
+                var variable = match.Groups[1].Value;
+                if (!_typeHints.ContainsKey(variable))
+                {
+                    // Placeholder as type is currently not used further
+                    _typeHints[variable] = "type";
+                }
+                // Remove the type hint from the code
+                code = code.Replace(match.Value, "");
+            }
+
             // Update regex patterns to capture inline type hints
-            var typeHintPattern = @"(?<!\w)(\w+)\s*:\s*([\w\[\]]+)";
+            var typeHintPattern = @"(?<!\w)(\w+)\s*::\s*([\w\[\]]+)";
             var typeHintRegex = new Regex(typeHintPattern);
             var matches = typeHintRegex.Matches(code);
 
@@ -125,8 +141,8 @@ namespace Raven.Internal
                 }
             }
 
-            // Update function signature patterns to include return types
-            var fnPattern = @"\bfn\s+(\w+)\s*(\([\w\s,:\[\]]*\))?\s*->?\s*([\w\[\]]+)?\s*{";
+            // Update function signature patterns to include return types for both block and inline styles
+            var fnPattern = @"\bfn\s+(\w+)\s*(\([\w\s,::\[\]]*\))?\s*->?\s*([\w\[\]]+)?\s*{";
             var fnRegex = new Regex(fnPattern);
             var fnMatches = fnRegex.Matches(code);
 
@@ -140,6 +156,26 @@ namespace Raven.Internal
                 var signature = $"function {funcName}{parameters}";
 
                 code = code.Replace(match.Value, $"{signature} {{");
+            }
+
+            // Add handling for inline functions with type hints
+            var inlineFnPattern =
+                @"\bfn\s+(\w+)\s*(\([\w\s,::\[\]]*\))?\s*->?\s*([\w\[\]]+)?\s*=\s*(.+)";
+            var inlineFnRegex = new Regex(inlineFnPattern);
+            var inlineFnMatches = inlineFnRegex.Matches(code);
+
+            foreach (Match match in inlineFnMatches)
+            {
+                var funcName = match.Groups[1].Value;
+                var parameters = match.Groups[2].Value;
+                var returnType = match.Groups[3].Value;
+                var body = match.Groups[4].Value;
+
+                // Convert to JS function syntax
+                // var returnTypeJs = string.IsNullOrEmpty(returnType) ? "" : $": {returnType}";
+                var signature = $"function {funcName}{parameters} {{ return {body}; }}";
+
+                code = code.Replace(match.Value, signature);
             }
 
             return code;
@@ -281,10 +317,10 @@ namespace Raven.Internal
                 (@"\bexpose\s+(\w+)", match => $"module.exports = {match.Groups[1].Value}"),
                 // Replace '==' with '===' ensuring no '===' or '!=='
                 (@"(?<![!=])==(?!=)", match => "==="),
-                // Replace '!=' with '!==' ensuring no '!=='
+                // Replace '!=' with '!== ensuring no '!=='
                 (@"(?<![=!])!=(?!=)", match => "!=="),
                 (
-                    @"\bfn\s+(\w+)\s*(\([\w\s,:\[\]]*\))?\s*->?\s*([\w\[\]]+)?\s*=\s*(.+)",
+                    @"\bfn\s+(\w+)\s*(\([\w\s,::\[\]]*\))?\s*->?\s*([\w\[\]]+)?\s*=\s*(.+)",
                     match =>
                     {
                         var funcName = match.Groups[1].Value;
@@ -296,22 +332,19 @@ namespace Raven.Internal
                         var returnTypeJs = string.IsNullOrEmpty(returnType)
                             ? ""
                             : $": {returnType}";
-                        return $"function {funcName}{parameters} {returnTypeJs} {{ {body} }}";
+                        return $"function {funcName}{parameters} {returnTypeJs} {{ return {body}; }}";
                     }
                 ),
                 (
-                    @"\b(\w+)\s*:\s*([\w\[\]]+)",
+                    @"\b(\w+)\s*::\s*([\w\[\]]+)",
                     match =>
                     {
                         var variable = match.Groups[1].Value;
-                        var typeHint = match.Groups[2].Value;
-
-                        // Convert to JS variable declaration
+                        var type = match.Groups[2].Value;
                         return $"{variable}";
                     }
-                )
+                ),
             };
-
             foreach (var (pattern, replacement) in patterns)
             {
                 code = Regex.Replace(
@@ -360,28 +393,6 @@ namespace Raven.Internal
             }
 
             return code;
-        }
-
-        private static string ReplaceVariableDeclarations(Match match)
-        {
-            // Example of processing a variable declaration with type hint
-            var declarations = match
-                .Groups[1]
-                .Value.Split('\n')
-                .Where(line => !string.IsNullOrWhiteSpace(line))
-                .Select(line =>
-                {
-                    var parts = line.Split(':').Select(part => part.Trim()).ToArray();
-                    if (parts.Length == 2)
-                    {
-                        var variable = parts[0];
-                        var type = parts[1];
-                        return $"let {variable}; // type: {type}";
-                    }
-                    return $"let {line.Trim()}";
-                });
-
-            return string.Join("\n", declarations);
         }
 
         private static string ReplaceXlet(Match match)

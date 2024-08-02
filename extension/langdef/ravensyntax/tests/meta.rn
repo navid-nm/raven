@@ -4,8 +4,8 @@ use os
 
 abbrev write = writeFileSync
 
-||filePath          -> String
-||extractAlbumArt   -> Promise
+||filePath         -> String
+||extractAlbumArt  -> Promise
 open async fn extractAlbumArt(filePath) {
    try {
       xval {

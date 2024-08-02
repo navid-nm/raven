@@ -23,7 +23,7 @@
    
    // Do not color it if color is not specified
 
-   fn colored(char, color) = color == undefined ? char : color + char + content.reset
+   fn colored(char::char, color::Color) -> NullableString = color == undefined ? char : color + char + content.reset
 
    content.colored = colored
 
