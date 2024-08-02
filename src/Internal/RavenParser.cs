@@ -1,4 +1,3 @@
-using System.Text;
 using System.Text.RegularExpressions;
 using Esprima;
 using Raven.Data;
@@ -105,20 +104,47 @@ namespace Raven.Internal
 
         private string ExtractAndProcessTypeHints(string code)
         {
-            var typeHintPattern = @"\|\|\s*(\w+)\s*->\s*[\w\[\]]+";
-            var regex = new Regex(typeHintPattern);
-            var matches = regex.Matches(code);
+            // Update regex patterns to capture inline type hints
+            var typeHintPattern = @"(?<!\w)(\w+)\s*:\s*([\w\[\]]+)";
+            var typeHintRegex = new Regex(typeHintPattern);
+            var matches = typeHintRegex.Matches(code);
 
+            // Process inline type hints
             foreach (Match match in matches)
             {
                 var variable = match.Groups[1].Value;
+                var type = match.Groups[2].Value;
+
+                // Remove the type hint from the code
+                code = code.Replace(match.Value, $"/* {variable}: {type} */");
+
+                // Placeholder to store type information
                 if (!_typeHints.ContainsKey(variable))
                 {
-                    // Placeholder as type is currently not used further
-                    _typeHints[variable] = "type";
+                    _typeHints[variable] = type;
                 }
-                // Remove the type hint from the code
-                code = code.Replace(match.Value, "");
+            }
+
+            // Update function signature patterns to include return types
+            var fnPattern = @"\bfn\s+(\w+)\s*(\([\w\s,:\[\]]*\))?\s*->?\s*([\w\[\]]+)?\s*=\s*(.+)";
+            var fnRegex = new Regex(fnPattern);
+            var fnMatches = fnRegex.Matches(code);
+
+            foreach (Match match in fnMatches)
+            {
+                var funcName = match.Groups[1].Value;
+                var parameters = match.Groups[2].Value;
+                var returnType = match.Groups[3].Value;
+                var body = match.Groups[4].Value;
+
+                // Adjust function signature
+                var signature = $"function {funcName}{parameters}";
+                if (!string.IsNullOrEmpty(returnType))
+                {
+                    signature += $": {returnType}";
+                }
+
+                code = code.Replace(match.Value, $"{signature} {{ {body} }}");
             }
 
             return code;
@@ -262,6 +288,33 @@ namespace Raven.Internal
                 (@"(?<![!=])==(?!=)", match => "==="),
                 // Replace '!=' with '!==' ensuring no '!=='
                 (@"(?<![=!])!=(?!=)", match => "!=="),
+                (
+                    @"\bfn\s+(\w+)\s*(\([\w\s,:\[\]]*\))?\s*->?\s*([\w\[\]]+)?\s*=\s*(.+)",
+                    match =>
+                    {
+                        var funcName = match.Groups[1].Value;
+                        var parameters = match.Groups[2].Value;
+                        var returnType = match.Groups[3].Value;
+                        var body = match.Groups[4].Value;
+
+                        // Convert to JS function syntax
+                        var returnTypeJs = string.IsNullOrEmpty(returnType)
+                            ? ""
+                            : $": {returnType}";
+                        return $"function {funcName}{parameters} {returnTypeJs} {{ {body} }}";
+                    }
+                ),
+                (
+                    @"\b(\w+)\s*:\s*([\w\[\]]+)",
+                    match =>
+                    {
+                        var variable = match.Groups[1].Value;
+                        var typeHint = match.Groups[2].Value;
+
+                        // Convert to JS variable declaration
+                        return $"{variable}";
+                    }
+                )
             };
 
             foreach (var (pattern, replacement) in patterns)
@@ -312,6 +365,28 @@ namespace Raven.Internal
             }
 
             return code;
+        }
+
+        private static string ReplaceVariableDeclarations(Match match)
+        {
+            // Example of processing a variable declaration with type hint
+            var declarations = match
+                .Groups[1]
+                .Value.Split('\n')
+                .Where(line => !string.IsNullOrWhiteSpace(line))
+                .Select(line =>
+                {
+                    var parts = line.Split(':').Select(part => part.Trim()).ToArray();
+                    if (parts.Length == 2)
+                    {
+                        var variable = parts[0];
+                        var type = parts[1];
+                        return $"let {variable}; // type: {type}";
+                    }
+                    return $"let {line.Trim()}";
+                });
+
+            return string.Join("\n", declarations);
         }
 
         private static string ReplaceXlet(Match match)
