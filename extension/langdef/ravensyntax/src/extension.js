@@ -2,7 +2,7 @@ const vscode = require("vscode");
 const RavenLinter = require("./linter");
 
 // Converts tabs to a fixed number of spaces
-function private_convertTabsToSpaces(code, tabSize = 4) {
+function private_convertTabsToSpaces(code, tabSize = 5) {
    const lines = code.split("\n");
    return lines
       .map((line) =>
@@ -177,8 +177,7 @@ function formatRavenDocument(document) {
    // const config = vscode.workspace.getConfiguration("ravenlang");
 
    // if (config.get("removeSemicolons")) {
-   formattedText = formattedText.replace(/;\s*\n/g, "\n");
-   //}
+   formattedText = formattedText.replace(/(?!end);[\s]*\n/g, "\n"); //}
 
    // Replace statements like 'val <module> = use("<module>")' with 'use <module>'
    formattedText = formattedText.replace(
