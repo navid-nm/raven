@@ -177,7 +177,7 @@ function formatRavenDocument(document) {
    // const config = vscode.workspace.getConfiguration("ravenlang");
 
    // if (config.get("removeSemicolons")) {
-   formattedText = formattedText.replace(/(?!end);[\s]*\n/g, "\n"); //}
+   // formattedText = formattedText.replace(/(?<!\bend)\s*;\s*\n/g, "\n");
 
    // Replace statements like 'val <module> = use("<module>")' with 'use <module>'
    formattedText = formattedText.replace(

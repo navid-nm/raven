@@ -1,8 +1,10 @@
 # Raven
 
-Transpiler that compiles Raven to JS.
+Transpiler that compiles Raven, a language focussed on clean syntax, expressiveness, and simplicity, to JS.
 
-https://github.com/navid-nm/raven
+Site: https://ravenlang.pages.dev
+Git: https://github.com/navid-nm/raven
+VSCode extension for Raven: https://marketplace.visualstudio.com/items?itemName=NavidM.ravenlang
 
 ---
 
