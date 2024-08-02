@@ -11,7 +11,7 @@ if (isWin)
 
    if (!fs.existsSync(ravenPath)) {
       say.error("Raven executable not found in bin dir.")
-      end(1)
+      end(1);
    }
 
    exec(command, (error, stdout, stderr) => 
@@ -29,7 +29,7 @@ if (isWin)
          say(stdout)
       }
    })
-   end
+   end;
 }
 
 say("Raven is currently not supported on non-windows platforms.")
