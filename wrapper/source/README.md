@@ -1,8 +1,8 @@
 # Raven
 
-Transpiler that compiles Raven to JS.
-
 Raven is a language focused on clean syntax, expressiveness, and simplicity.
+
+Compiles to JS.
 
 Site: https://ravenlang.pages.dev
 

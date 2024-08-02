@@ -2,7 +2,7 @@ namespace Raven.Data
 {
     public static class Meta
     {
-        public static readonly string Version = "1.2.2";
+        public static readonly string Version = "1.2.4";
         private static readonly string AboutImage =
             @"
 ====-=--=---==-----=-----------------------=-=-----===--==--====

@@ -1,6 +1,6 @@
 {
    "name": "ravenlang",
-   "version": "1.2.2",
+   "version": "1.2.4",
    "description": "",
    "bin": {
       "raven": "bin/raven.exe"
@@ -14,7 +14,12 @@
       "build": "raven",
       "test": "echo \"Error: no test specified\" && exit 1"
    },
-   "keywords": [],
+   "keywords": [
+      "compiler",
+      "language",
+      "raven",
+      "ravenlang"
+   ],
    "author": "navidm",
    "homepage": "https://ravenlang.pages.dev",
    "license": "ISC"
