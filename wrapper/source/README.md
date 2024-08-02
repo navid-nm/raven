@@ -26,21 +26,27 @@ Simple example:
 fn add(x, y) = x + y
 
 fn main() {
-    say(add(1, 2))
+    val result = add(1, 2)
+    if (result == 3) {
+        say("will always print")
+    }
 }
 ```
 
-Transpiles to the following JavaScript:
+Transpiles to the following JS:
 
 ```
 "use strict";
 
 function add(x, y) {
-    return x + y;
+   return x + y;
 }
 
 function main() {
-    console.log(add(1, 2));
+   const result = add(1, 2);
+   if (result === 3) {
+      console.log("will always print");
+   }
 }
 ```
 
@@ -65,12 +71,5 @@ cn.on("ReceiveVideo", fn(video)
     }
 });
 ```
-
----
-
-##### Notes
-
--  Includes builtin HTML templating via .rhtml files and the rhtml() builtin.
--  Has inline JS capability if really required
 
 ---
