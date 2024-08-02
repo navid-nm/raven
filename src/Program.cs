@@ -28,8 +28,7 @@ try
 
     if (showHelp)
     {
-        Console.WriteLine("Usage: raven [options] [<input file path(s)>]");
-        options.WriteOptionDescriptions(Console.Out);
+        DisplayHelpMessage();
         return;
     }
 
@@ -73,8 +72,11 @@ try
         if (ravenFiles.Length == 0)
         {
             Logger.RaiseProblem(
-                "No source files found in the current directory or its subdirectories."
+                message: "No source files found in the current directory or its subdirectories.",
+                fatal: false
             );
+            DisplayHelpMessage("\n");
+            return;
         }
         foreach (var ravenFile in ravenFiles)
         {
@@ -102,4 +104,10 @@ catch (Exception ex)
 {
     Console.WriteLine($"Error: {ex.Message}");
     Environment.Exit(1);
+}
+
+void DisplayHelpMessage(string prepend = "")
+{
+    Console.WriteLine($"{prepend}Usage: raven [options] [<input file path(s)>]");
+    options.WriteOptionDescriptions(Console.Out);
 }
