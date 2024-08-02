@@ -14,6 +14,10 @@ VSCode Extension: https://marketplace.visualstudio.com/items?itemName=NavidM.rav
 
 ## Usage
 
+Run "raven" in commandline without any args to compile all .rn files in current dir and containing subdirs to .js.
+
+To run .rn files directly run "raven -r file.rn".
+
 ## Examples
 
 Simple example:
