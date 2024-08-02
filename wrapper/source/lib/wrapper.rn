@@ -15,7 +15,8 @@ if (isWin)
 
    val command = `"${ravenPath}" ${process.argv.slice(2).join(" ")}`
 
-   exec(command, (error, stdout, stderr) => {
+   exec(command, (error, stdout, stderr) => 
+   {
       if (error) {
          say.error(`Error executing raven.exe: ${error.message}`)
          end(1)
