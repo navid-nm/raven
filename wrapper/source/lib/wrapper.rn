@@ -1,16 +1,14 @@
 use path
 use fs
 
-abbrev isReal = fs.existsSync
-
-val { exec } = use("child_process")
-val isWin = process.platform == "win32"
+val { exec }   = use("child_process")
+val isWin      = process.platform == "win32"
 
 if (isWin) 
 {
    val ravenPath = path.join(__dirname, "../bin/raven.exe")
 
-   if (!isReal(ravenPath)) {
+   if (!fs.existsSync(ravenPath)) {
       say.error("Raven executable not found in bin dir.")
       end(1)
    }
