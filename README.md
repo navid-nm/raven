@@ -2,9 +2,13 @@
 
 Language that compiles to JS. Specifically for simplifying JS-related code, making it more concise, typesafe and expressive.
 
----
+## Install
 
-Examples:
+-  Can be installed manually by downloading the exe from the GitHub release, and placing it in a folder, then adding that folder to system PATH.
+
+-  Can also be installed via npm, yarn, etc: `npm install -g ravenlang`
+
+## Examples
 
 ```
 fn add(x, y) = x + y
