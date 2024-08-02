@@ -12,3 +12,4 @@ obj
 .antlr
 *.jar
 *.vsix
+*.js
