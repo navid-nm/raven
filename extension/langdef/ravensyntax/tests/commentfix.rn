@@ -1,0 +1,3 @@
+//hi
+fn test() -> string = "this is a test string"
+say(test())
