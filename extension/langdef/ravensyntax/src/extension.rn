@@ -1,7 +1,12 @@
 import linter
 
+use fs
+use os
+use path
+val { execSync } = use("child_process");
+
 // Converts tabs to a fixed number of spaces
-fn convertTabsToSpaces(code, tabSize = 5) {
+fn private_convertTabsToSpaces(code, tabSize = 5) {
    val lines = code.split("\n");
    return lines
       .map((line) =>
@@ -13,8 +18,6 @@ fn convertTabsToSpaces(code, tabSize = 5) {
 }
 
 // Aligns type definitions and normalizes tabs to 4 spaces
-|| code   -> string
-|| lines  -> string[]
 fn alignDefinitions(code) {
    val lines = code.split("\n");
 
@@ -96,45 +99,268 @@ fn alignDefinitions(code) {
          })
          .join("\n");
 
-      return convertTabsToSpaces(formattedLines);
+      return private_convertTabsToSpaces(formattedLines);
    }
 
-   return convertTabsToSpaces(code);
+   return private_convertTabsToSpaces(code);
 }
 
-// Helper function to replace text outside string literals and comments
-fn replaceOutsideStringsAndComments(text, regex, replacement) {
-   val stringAndCommentRegex = /(["'`].*?["'`]|\/\/.*?$)/gm;
-   let result = "";
-   let lastIndex = 0;
+// Path to the temporary JavaScript file
+val tmpDir = os.tmpdir();
+val tmpJsFilePath = path.join(tmpDir, "raven_tmp.js");
 
-   // Find all string literals and comments
-   text.replace(stringAndCommentRegex, (match, p1, offset) => {
-      // Replace text outside the string literals and comments
-      result += text
-         .substring(lastIndex, offset)
-         .replace(regex, replacement);
-      // Append the string literal or comment without changes
-      result += match;
-      // Update the last processed index
-      lastIndex = offset + match.length;
-      return match;
-   });
-
-   // Replace text after the last string literal or comment
-   result += text.substring(lastIndex).replace(regex, replacement);
-   return result;
+// Function to transpile Raven to JavaScript
+fn transpileRavenToJs(ravenCode) {
+   try {
+      fs.writeFileSync("temp.rn", ravenCode);
+      execSync("raven temp.rn");
+      val jsCode = fs.readFileSync("temp.js", "utf-8");
+      return jsCode;
+   } die (error) {
+      say.error(`Transpilation error: ${error.message}`);
+      throw error;
+   }
 }
 
-// Helper function to handle regex replacements without repeated escaping
+// Function to update the temporary JavaScript file
+fn updateTempJsFile(document, diagnosticCollection) {
+   val ravenCode = document.getText();
+   let jsCode;
+   try {
+      jsCode = transpileRavenToJs(ravenCode);
+      fs.writeFileSync(tmpJsFilePath, jsCode);
+      // Clear any existing diagnostics on successful transpilation
+      diagnosticCollection.clear();
+   } die (error) {
+      // Add a diagnostic message if transpilation fails
+      val diagnostic = new vscode.Diagnostic(
+         new vscode.Range(0, 0, 0, 0),
+         `Transpilation error: ${error.message}`,
+         vscode.DiagnosticSeverity.Error
+      );
+      diagnosticCollection.set(document.uri, [diagnostic]);
+   }
+}
+
+// Function to register JavaScript language services
+fn registerJsLanguageFeatures(context, diagnosticCollection) {
+   val jsDocument = vscode.Uri.file(tmpJsFilePath);
+
+   context.subscriptions.push(
+      vscode.languages.registerHoverProvider("raven", {
+         provideHover(document, position, token) {
+            updateTempJsFile(document, diagnosticCollection);
+            val jsPosition = new vscode.Position(
+               position.line,
+               position.character
+            );
+            return vscode.commands.executeCommand(
+               "vscode.executeHoverProvider",
+               jsDocument,
+               jsPosition
+            );
+         },
+      })
+   );
+
+   context.subscriptions.push(
+      vscode.languages.registerCompletionItemProvider(
+         "raven",
+         {
+            provideCompletionItems(document, position, token, context) {
+               updateTempJsFile(document, diagnosticCollection);
+               val jsPosition = new vscode.Position(
+                  position.line,
+                  position.character
+               );
+               return vscode.commands.executeCommand(
+                  "vscode.executeCompletionItemProvider",
+                  jsDocument,
+                  jsPosition
+               );
+            },
+         },
+         ""
+      )
+   );
+
+   context.subscriptions.push(
+      vscode.languages.registerDefinitionProvider("raven", {
+         provideDefinition(document, position, token) {
+            updateTempJsFile(document, diagnosticCollection);
+            val jsPosition = new vscode.Position(
+               position.line,
+               position.character
+            );
+            return vscode.commands.executeCommand(
+               "vscode.executeDefinitionProvider",
+               jsDocument,
+               jsPosition
+            );
+         },
+      })
+   );
+}
+
+// Keyword to JavaScript mapping
+val keywordMappings = {
+   say: "say",
+   "say.info": "say.info",
+   "say.table": "say.table",
+   "say.debug": "say.debug",
+   "say.trace": "say.trace",
+   "say.time": "say.time",
+   "say.amber": "say.amber",
+   "say.error": "say.error",
+   "say.tend": "say.tend",
+   "say.clear": "say.clear",
+   "say.tlog": "say.tlog",
+   "say.tstamp": "say.tstamp",
+   "say.group": "say.group",
+   str: "toString",
+   num: "toNumber",
+   warn: "say.error",
+   end: "end",
+   expose: "module.exports",
+   my: "this",
+   init: "init",
+   use: "use",
+   fn: "fn",
+   closed: "closed",
+   open: "open",
+   stat: "stat",
+   die: "die",
+   val: "val",
+   elif: "elif",
+};
+
+// Raven keywords
+val ravenKeywords = [
+   "say",
+   "say.info",
+   "say.table",
+   "say.debug",
+   "say.trace",
+   "say.time",
+   "say.amber",
+   "say.error",
+   "say.tend",
+   "say.clear",
+   "say.tlog",
+   "say.tstamp",
+   "say.group",
+   "str",
+   "num",
+   "warn",
+   "end",
+   "expose",
+   "my",
+   "init",
+   "use",
+   "fn",
+   "closed",
+   "open",
+   "stat",
+   "die",
+   "val",
+   "elif",
+];
+
+// Register custom hover provider for Raven language
+fn registerCustomHoverProvider(context) {
+   context.subscriptions.push(
+      vscode.languages.registerHoverProvider("raven", {
+         provideHover(document, position, token) {
+            val range = document.getWordRangeAtPosition(position);
+            val word = document.getText(range);
+
+            if (keywordMappings[word]) {
+               val hoverText = new vscode.MarkdownString(
+                  `**${word}**: ${keywordMappings[word]}`
+               );
+               return new vscode.Hover(hoverText);
+            }
+         },
+      })
+   );
+}
+
+// Register custom completion provider for Raven language
+fn registerCustomCompletionProvider(context) {
+   context.subscriptions.push(
+      vscode.languages.registerCompletionItemProvider(
+         "raven",
+         {
+            provideCompletionItems(document, position, token, context) {
+               val completionItems = ravenKeywords.map((keyword) => {
+                  val item = new vscode.CompletionItem(
+                     keyword,
+                     vscode.CompletionItemKind.Keyword
+                  );
+                  item.insertText = keyword;
+                  return item;
+               });
+               return completionItems;
+            },
+         },
+         ""
+      )
+   );
+
+   vscode.workspace
+      .getConfiguration("editor")
+      .update(
+         "acceptSuggestionOnCommitCharacter",
+         false,
+         vscode.ConfigurationTarget.Global
+      );
+}
+
+fn replaceOutsideStringsAndComments(code, regex, replacement) {
+   val stringRegex = /(["'`]).*?\1/g; // Matches string literals
+   val commentRegex = /(\/\/.*$|\/\*[\s\S]*?\*\/)/gm; // Matches single-line and multi-line comments
+
+   let inStringOrComment = false;
+   let modifiedCode = "";
+
+   for (let i = 0; i < code.length; i++) {
+      if (inStringOrComment) {
+         if (
+            code[i] == inStringOrComment &&
+            (code[i - 1] != "\\" || code[i - 2] == "\\")
+         ) {
+            inStringOrComment = false;
+         }
+         modifiedCode += code[i];
+         continue;
+      }
+
+      if (
+         code[i] == '"' ||
+         code[i] == "'" ||
+         code[i] == "`" ||
+         (code[i] == "/" && (code[i + 1] == "/" || code[i + 1] == "*"))
+      ) {
+         inStringOrComment = code[i];
+      }
+
+      if (inStringOrComment) {
+         modifiedCode += code[i];
+         continue;
+      }
+
+      modifiedCode += code.slice(i).replace(regex, replacement);
+      break;
+   }
+
+   return modifiedCode;
+}
+
 fn formatRavenDocument(document) {
    let formattedText = document.getText();
-
-   // Define the replacements
    val replacements = [
       { regex: /\bconsole\.log\b/g, replacement: "say" },
       { regex: /\bconsole\.info\b/g, replacement: "say.info" },
-      { regex: /\bconsole\.table\b/g, replacement: "say.table" },
       { regex: /\bconsole\.debug\b/g, replacement: "say.debug" },
       { regex: /\bconsole\.trace\b/g, replacement: "say.trace" },
       { regex: /\bconsole\.time\b/g, replacement: "say.time" },
@@ -162,8 +388,8 @@ fn formatRavenDocument(document) {
       { regex: /\bcatch\b/g, replacement: "die" },
       { regex: /\bconst\b/g, replacement: "val" },
       { regex: /\belse\s+if\b/g, replacement: "elif" },
-      { regex: /==/g, replacement: "==" }, // Replace '===' with '=='
-      { regex: /!=/g, replacement: "!=" }, // Replace '!==' with '!='
+      { regex: /==/g, replacement: "==" }, // Replace '==' with '=='
+      { regex: /!=/g, replacement: "!=" }, // Replace '!=' with '!='
    ];
 
    // Apply the replacements outside string literals and comments
@@ -175,12 +401,6 @@ fn formatRavenDocument(document) {
       );
    });
 
-   // const config = vscode.workspace.getConfiguration("ravenlang");
-
-   // if (config.get("removeSemicolons")) {
-   // formattedText = formattedText.replace(/(?<!\bend)\s*;\s*\n/g, "\n");
-
-   // Replace statements like 'val <module> = use("<module>")' with 'use <module>'
    formattedText = formattedText.replace(
       /\b(?:val|val)\s+(\w+)\s*=\s*use\(["']\1["']\);?/g,
       "use $1"
@@ -201,6 +421,8 @@ fn formatRavenDocument(document) {
 }
 
 fn activate(context) {
+   val diagnosticCollection =
+      vscode.languages.createDiagnosticCollection("raven");
    val linter = new RavenLinter();
    vscode.workspace.onDidOpenTextDocument(linter.lintDocument, linter);
    vscode.workspace.onDidChangeTextDocument((event) =>
@@ -208,6 +430,7 @@ fn activate(context) {
    );
    vscode.workspace.onDidSaveTextDocument(linter.lintDocument, linter);
 
+   // Register formatting and language features
    context.subscriptions.push(
       vscode.languages.registerDocumentFormattingEditProvider("raven", {
          provideDocumentFormattingEdits(document) {
@@ -216,7 +439,50 @@ fn activate(context) {
       })
    );
 
+   registerJsLanguageFeatures(context, diagnosticCollection);
+   registerCustomHoverProvider(context);
+   registerCustomCompletionProvider(context);
+
    context.subscriptions.push(linter);
+   context.subscriptions.push(diagnosticCollection);
+
+   // Register code action provider for Raven
+   context.subscriptions.push(
+      vscode.languages.registerCodeActionsProvider("raven", {
+         provideCodeActions(document, range, context, token) {
+            val diagnostics =
+               diagnosticCollection.get(document.uri) || [];
+            val quickFixes = [];
+
+            diagnostics.forEach((diagnostic) => {
+               if (diagnostic.message.includes("Raven is not installed")) {
+                  quickFixes.push({
+                     title: "Install Raven Language",
+                     command: "vscode.openTerminal",
+                     arguments: [
+                        {
+                           cwd: vscode.workspace.workspaceFolders[0].uri
+                              .fsPath,
+                           name: "Install Raven",
+                           args: ["npm", "install", "-g", "ravenlang"],
+                        },
+                     ],
+                  });
+               }
+            });
+
+            return quickFixes;
+         },
+      })
+   );
+
+   // Set up a periodic timer to check and update diagnostics
+   setInterval(() => {
+      val editor = vscode.window.activeTextEditor;
+      if (editor && editor.document.languageId == "raven") {
+         updateTempJsFile(editor.document, diagnosticCollection);
+      }
+   }, 1000);
 }
 
 fn deactivate() {}
