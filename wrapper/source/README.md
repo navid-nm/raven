@@ -2,13 +2,15 @@
 
 Raven is a language focused on clean syntax, expressiveness, and simplicity.
 
+No config files required, can easily integrate into existing Node/Bun/etc... projects.
+
 Compiles to JS.
 
 Site: https://ravenlang.pages.dev
 
 Git: https://github.com/navid-nm/raven
 
-VSCode Extension: https://marketplace.visualstudio.com/items?itemName=NavidM.ravenlang
+VSCode Extension (Recommended): https://marketplace.visualstudio.com/items?itemName=NavidM.ravenlang
 
 ---
 
@@ -16,7 +18,7 @@ VSCode Extension: https://marketplace.visualstudio.com/items?itemName=NavidM.rav
 
 `npm install -g ravenlang`
 
-Run "raven" in commandline without any args to compile all .rn files in current dir and containing subdirs to .js.
+Run `raven` in commandline without any args to compile all .rn files in current dir and containing subdirs to .js.
 
 To run .rn files directly run "raven -r file.rn".
 
