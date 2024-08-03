@@ -15,20 +15,20 @@ class RavenLinter {
       let diagnostics = [];
 
       try {
-         // Use `which` command for Unix-based systems or `where` for Windows
          val command = process.platform == "win32" ? "where raven" : "which raven";
          execSync(
             command, {
                stdio: "ignore" 
             }
          );
-      } die (error) {
+      } die (error:: Error) {
          if (error.message.includes("Raven is not recognized")) {
             val diagnostic = new vscode.Diagnostic(
                new vscode.Range(0, 0, 0, 0),
                "Raven is not installed. Run 'npm install -g ravenlang'.",
                vscode.DiagnosticSeverity.Error
             );
+
             diagnostic.code = "RAVEN_NOT_INSTALLED";
             diagnostics.push(diagnostic);
          } else {
