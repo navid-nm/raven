@@ -104,8 +104,7 @@ namespace Raven.Internal
 
         private string ExtractAndProcessTypeHints(string code)
         {
-            var oldTypeHintPattern = @"\|\|\s*(\w+)\s*->\s*[\w\[\]]+";
-            var oldTypeHintRegex = new Regex(oldTypeHintPattern);
+            var oldTypeHintRegex = OldTypeHintRegex();
             var oldMatches = oldTypeHintRegex.Matches(code);
 
             foreach (Match match in oldMatches)
@@ -121,8 +120,7 @@ namespace Raven.Internal
             }
 
             // Update regex patterns to capture inline type hints
-            var typeHintPattern = @"(?<!\w)(\w+)\s*::\s*([\w\[\]]+)";
-            var typeHintRegex = new Regex(typeHintPattern);
+            var typeHintRegex = TypeHintRegex();
             var matches = typeHintRegex.Matches(code);
 
             // Process inline type hints
@@ -141,9 +139,8 @@ namespace Raven.Internal
                 }
             }
 
-            // Update function signature patterns to include return types for both block and inline styles
-            var fnPattern = @"\bfn\s+(\w+)\s*(\([\w\s,::\[\]]*\))?\s*->?\s*([\w\[\]]+)?\s*{";
-            var fnRegex = new Regex(fnPattern);
+            // Include return types for both block and inline styles
+            var fnRegex = FunctionSignatureRegex();
             var fnMatches = fnRegex.Matches(code);
 
             foreach (Match match in fnMatches)
@@ -159,9 +156,7 @@ namespace Raven.Internal
             }
 
             // Add handling for inline functions with type hints
-            var inlineFnPattern =
-                @"\bfn\s+(\w+)\s*(\([\w\s,::\[\]]*\))?\s*->?\s*([\w\[\]]+)?\s*=\s*(.+)";
-            var inlineFnRegex = new Regex(inlineFnPattern);
+            var inlineFnRegex = InlineFunctionRegex();
             var inlineFnMatches = inlineFnRegex.Matches(code);
 
             foreach (Match match in inlineFnMatches)
@@ -183,8 +178,7 @@ namespace Raven.Internal
 
         private string ExtractAndProcessAbbreviations(string code)
         {
-            var abbrevPattern = @"abbrev\s*{([^}]*)}";
-            var abbrevRegex = new Regex(abbrevPattern, RegexOptions.Singleline);
+            var abbrevRegex = AbbrevRegex();
             var abbrevMatch = abbrevRegex.Match(code);
 
             if (abbrevMatch.Success)
@@ -215,8 +209,7 @@ namespace Raven.Internal
             }
 
             // Process inline abbreviations
-            var inlineAbbrevPattern = @"abbrev\s+(\w+)\s*=\s*([\w.]+)";
-            var inlineAbbrevRegex = new Regex(inlineAbbrevPattern);
+            var inlineAbbrevRegex = InlineAbbrevRegex();
             var inlineAbbrevMatches = inlineAbbrevRegex.Matches(code);
 
             foreach (Match match in inlineAbbrevMatches)
@@ -521,5 +514,23 @@ namespace Raven.Internal
 
         [GeneratedRegex(@"(?<!['\w])closed(?!['\w])")]
         private static partial Regex TemporaryRawCloseCheckRegex();
+
+        [GeneratedRegex(@"\|\|\s*(\w+)\s*->\s*[\w\[\]]+")]
+        private static partial Regex OldTypeHintRegex();
+
+        [GeneratedRegex(@"(?<!\w)(\w+)\s*::\s*([\w\[\]]+)")]
+        private static partial Regex TypeHintRegex();
+
+        [GeneratedRegex(@"\bfn\s+(\w+)\s*(\([\w\s,::\[\]]*\))?\s*->?\s*([\w\[\]]+)?\s*{")]
+        private static partial Regex FunctionSignatureRegex();
+
+        [GeneratedRegex(@"\bfn\s+(\w+)\s*(\([\w\s,::\[\]]*\))?\s*->?\s*([\w\[\]]+)?\s*=\s*(.+)")]
+        private static partial Regex InlineFunctionRegex();
+
+        [GeneratedRegex(@"abbrev\s*{([^}]*)}", RegexOptions.Singleline)]
+        private static partial Regex AbbrevRegex();
+
+        [GeneratedRegex(@"abbrev\s+(\w+)\s*=\s*([\w.]+)")]
+        private static partial Regex InlineAbbrevRegex();
     }
 }
