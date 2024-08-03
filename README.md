@@ -10,7 +10,7 @@ Language that compiles to JS. Specifically for simplifying JS-related code, maki
 
 ## Examples
 
-```
+```rust
 fn add(x, y) = x + y
 
 fn main() {
@@ -43,25 +43,18 @@ function main() {
 
 Types:
 
-```d
-|| cn       -> Connection
-|| video    -> Video
-|| err      -> Error
-cn.on("ReceiveVideo", fn(video)
-{
-    try {
-        say(
-            "Video received",
-            video.str()
-        );
-    } die (err) {
-        warn(
-            "Error appending video card:",
-            err
-        )
-    }
-});
+```rust
+let x :: number = 2
 
+fn hello(world:: string) -> string {
+    return world
+}
+
+fn sayBack(world:: string) -> string {
+    return world
+}
+
+fn doStuffInline(test:: string) -> string = test
 ```
 
 ---

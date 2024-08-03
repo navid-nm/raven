@@ -4,8 +4,8 @@ fn hello(world:: string) -> string {
     return world
 }
 
-fn sayBack(world) {
+fn sayBack(world:: string) -> string {
     return world
 }
 
-fn doStuffInline(test) -> string = test
+fn doStuffInline(test:: string) -> string = test
