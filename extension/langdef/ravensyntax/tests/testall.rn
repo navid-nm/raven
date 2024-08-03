@@ -1,0 +1,68 @@
+
+
+use fs
+use path
+
+val { exec, spawnSync } = use("child_process");
+val currentDir = process.cwd();
+var testCount = 0;
+
+fn clean() -> void {
+   fs.readdirSync(currentDir, (err, files) => {
+      if (err) {
+         say.error("Error reading directory:", err);
+         return;
+      }
+
+      files.forEach((file) => {
+         if (path.extname(file) == ".js" && file.name) {
+            val filePath = path.join(currentDir, file);
+            fs.unlink(filePath, (err) => {
+               if (err) {
+                  say.error("Error deleting file:", err);
+               } else {
+                  say(`Deleted ${file}`);
+               }
+            });
+         }
+      });
+
+      exec("raven", (err, stdout, stderr) => {
+         if (err) {
+            say.error("Error executing ravenc:", err);
+            return;
+         }
+         say(stdout);
+      });
+   });
+}
+
+
+var errorCount = 0;
+var passCount = 0;
+
+fn run() {
+   val currentDir = process.cwd();
+   val files = fs.readdirSync(currentDir);
+
+   for (val file of files) {
+      if (file.startsWith("testall")) {
+         continue;
+      }
+      if (path.extname(file) == ".js") {
+         say("testing: ", file);
+         try {
+            spawnSync("node", [path.join(currentDir, file)]);
+            passCount++;
+         } die (error) {
+            say(error);
+            errorCount++;
+         }
+      }
+   }
+}
+
+clean();
+run();
+
+say(passCount, "tests passed\n" + errorCount.str(), "tests failed");

@@ -362,7 +362,7 @@ namespace Raven.Internal
                     match =>
                     {
                         var moduleName = match.Groups[1].Value;
-                        return $"const {{ {moduleName} }} = require(\"{moduleName}\");";
+                        return $"const {moduleName} = require(\"{moduleName}\");";
                     }
                 );
 
@@ -495,7 +495,7 @@ namespace Raven.Internal
 
         private static string PurgeStrictIssue(string code)
         {
-            return code.Replace("\"const { strict } = require(\"strict\");\";", "");
+            return code.Replace("\"const strict = require(\"strict\");\";", "");
         }
 
         [GeneratedRegex(@"\bimport\s+([\w\.]+)\s*;?")]
