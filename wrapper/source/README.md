@@ -2,7 +2,7 @@
 
 Raven is a language focused on clean syntax, expressiveness, and simplicity.
 
-No config files required, can easily integrate into existing Node/Bun/etc... projects.
+No config file required, can easily integrate into existing Node/Bun/etc... projects.
 
 Compiles to JS.
 
