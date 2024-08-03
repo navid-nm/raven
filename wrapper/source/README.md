@@ -54,26 +54,20 @@ function main() {
 
 Types:
 
-```
-|| cn       -> Connection
-|| video    -> Video
-|| err      -> Error
-cn.on("ReceiveVideo", fn(video)
-{
-    try {
-        say(
-            "Video received",
-            video
-        );
-    } die (err) {
-        warn(
-            "Error appending video card:",
-            err
-        )
-    }
-});
+```rust
+let x :: number = 2
+
+fn hello(world:: string) -> string {
+    return world
+}
+
+fn sayBack(world:: string) -> string {
+    return world
+}
+
+fn doStuffInline(test:: string) -> string = test
 ```
 
 ---
 
-&copy; 2024 Navid Momtahen
+&copy; 2024 Navid M
