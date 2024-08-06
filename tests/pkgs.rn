@@ -1,7 +1,6 @@
 import packages.goats.garganica
 
-|| test_goat_package    -> Void
-fn test_goat_package() {
+fn test_goat_package() -> void {
     hello()
     say("also they're from italy")
 }
