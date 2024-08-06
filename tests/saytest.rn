@@ -1,5 +1,3 @@
-|| data  -> JSON
-|| x     -> number
 fn logtest() {
     say("This is a simple log message")
 
